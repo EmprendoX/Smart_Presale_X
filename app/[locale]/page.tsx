@@ -9,8 +9,8 @@ import { computeProgress } from "@/lib/rules";
 
 export const revalidate = 0;
 
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
+export default async function HomePage({ params }: { params: { locale: string } }) {
+  const { locale } = params;
   const t = await getTranslations();
   const projects = await listPublishedProjects();
   

@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Navbar } from "@/components/Navbar";
@@ -27,19 +27,15 @@ const defaultMessages = {
   }
 };
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
-
 export default async function LocaleLayout({
   children,
   params
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
-  const { locale } = await params;
-  
+  const { locale } = params;
+
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
@@ -60,10 +56,12 @@ export default async function LocaleLayout({
     messages = defaultMessages;
   }
 
+  setRequestLocale(locale);
+
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <ToastProvider>
             <Navbar />
             <main className="container py-8">{children}</main>
