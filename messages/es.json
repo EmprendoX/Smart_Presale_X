@@ -283,6 +283,15 @@
     "financialInfo": "Información Financiera (opcional)",
     "propertyDetails": "Detalles de la propiedad (opcional)",
     "roundInfo": "Ronda de preventa",
+    "saleInfo": "Las propiedades en venta directa no requieren una ronda de preventa. Guarda el proyecto y publícalo desde Admin.",
+    "listingType": {
+      "presale": "Preventa",
+      "sale": "Venta directa"
+    },
+    "listingTypeHelp": {
+      "presale": "Activa una ronda de preventa con depósitos y cupos para reservas anticipadas.",
+      "sale": "Publica inventario listo para escriturar o entrega inmediata sin gestionar rondas."
+    },
     "projectDocuments": "Documentos del proyecto",
     "projectDocumentsDescription": "Sube documentos PDF con un título descriptivo",
     "loadingDocuments": "Cargando documentos...",
@@ -297,6 +306,7 @@
       "description": "Descripción *",
       "descriptionPlaceholder": "Describe el proyecto...",
       "images": "Imágenes (URLs o subir archivos)",
+      "listingType": "Tipo de inventario *",
       "videoUrl": "Video URL (opcional)",
       "videoUrlPlaceholder": "https://youtube.com/watch?v=...",
       "videoUrlHelp": "URL de video promocional (YouTube, Vimeo, etc.)",
@@ -381,11 +391,13 @@
     "messages": {
       "projectUpdated": "Proyecto actualizado exitosamente",
       "projectCreated": "Proyecto y ronda creados exitosamente. Envía a revisión/publicación desde Admin.",
+      "projectCreatedSale": "Propiedad en venta creada exitosamente. Admin puede publicarla de inmediato.",
       "projectSaveError": "No se pudo guardar el proyecto",
       "loadError": "Error al cargar proyectos",
       "saving": "Guardando...",
       "updateProject": "Actualizar proyecto",
-      "createProjectAndRound": "Crear proyecto y ronda"
+      "createProjectAndRound": "Crear proyecto y ronda",
+      "createSaleProject": "Guardar propiedad en venta"
     },
     "round": {
       "round": "Ronda",
@@ -520,6 +532,28 @@
       "scope": {
         "global": "Global",
         "campaign": "Campaña"
+      },
+      "createTitle": "Crear comunidad",
+      "createDescription": "Organiza tus espacios digitales por preventa o mantén una comunidad general para tu marca.",
+      "form": {
+        "name": "Nombre de la comunidad *",
+        "description": "Descripción *",
+        "scope": "Tipo de comunidad",
+        "scopeHelp": "Usa \"Campaña\" para agrupar a inversionistas de una preventa específica o \"General\" para toda tu comunidad.",
+        "scopeOptions": {
+          "campaign": "Campaña de preventa",
+          "global": "General"
+        },
+        "project": "Proyecto asociado (opcional)",
+        "projectHelp": "Selecciona el proyecto de preventa al que pertenece este grupo.",
+        "round": "Ronda (opcional)",
+        "roundHelp": "Vincula la ronda de preventa si quieres segmentar por grupo específico.",
+        "tags": "Etiquetas (separadas por comas)",
+        "coverImage": "Imagen de portada (URL opcional)",
+        "submit": "Crear comunidad",
+        "creating": "Creando...",
+        "success": "Comunidad creada exitosamente",
+        "error": "No se pudo crear la comunidad"
       }
     },
     "messages": {

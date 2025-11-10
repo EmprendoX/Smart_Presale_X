@@ -16,8 +16,9 @@ import { ZoneEditor } from "@/components/ZoneEditor";
 import { DocumentUploader } from "@/components/DocumentUploader";
 import { DocumentList } from "@/components/DocumentList";
 import { api } from "@/lib/api";
-import { Project, ProjectStatus, ProjectDocument } from "@/lib/types";
+import { ListingType, Project, ProjectStatus, ProjectDocument } from "@/lib/types";
 import { fmtCurrency } from "@/lib/format";
+import { VideoPlayer } from "@/components/VideoPlayer";
 
 type ProjectWithRound = Project & { round?: any };
 
@@ -44,6 +45,7 @@ export default function DevPanel() {
   const [pCountry, setPCountry] = useState("MX");
   const [pCurrency, setPCurrency] = useState<"USD"|"MXN">("USD");
   const [pDesc, setPDesc] = useState("");
+  const [pListingType, setPListingType] = useState<ListingType>("presale");
   const [pImages, setPImages] = useState<string[]>([]);
   const [pVideoUrl, setPVideoUrl] = useState("");
   const [pTotalUnits, setPTotalUnits] = useState<number | "">("");
@@ -67,6 +69,18 @@ export default function DevPanel() {
     parkingSpaces?: number;
     floors?: number;
   }>({});
+
+  const videoUrlPreview = pVideoUrl.trim();
+
+  const handleListingTypeChange = (value: ListingType) => {
+    setPListingType(value);
+    if (value === "sale") {
+      setErrors(prev => {
+        const { goalValue, deposit, slotsPerPerson, deadlineDays, ...rest } = prev;
+        return rest;
+      });
+    }
+  };
 
   // Ronda
   const [goalType, setGoalType] = useState<"reservations"|"amount">("reservations");
@@ -131,6 +145,7 @@ export default function DevPanel() {
     setPCountry("MX");
     setPCurrency("USD");
     setPDesc("");
+    setPListingType("presale");
     setPImages([]);
     setPVideoUrl("");
     setPTotalUnits("");
@@ -158,6 +173,7 @@ export default function DevPanel() {
     setPCountry(project.country);
     setPCurrency(project.currency);
     setPDesc(project.description);
+    setPListingType(project.listingType || "presale");
     setPImages(project.images || []);
     setPVideoUrl(project.videoUrl || "");
     setPTotalUnits(project.totalUnits || "");
@@ -192,10 +208,12 @@ export default function DevPanel() {
     if (!pCountry.trim()) newErrors.country = tVal("countryRequired");
     if (!pDesc.trim()) newErrors.description = tVal("descriptionRequired");
     if (pImages.length === 0) newErrors.images = tVal("imagesRequired");
-    if (goalValue <= 0) newErrors.goalValue = tVal("goalValueRequired");
-    if (deposit <= 0) newErrors.deposit = tVal("depositRequired");
-    if (slotsPerPerson <= 0) newErrors.slotsPerPerson = tVal("slotsPerPersonRequired");
-    if (deadlineDays <= 0) newErrors.deadlineDays = tVal("deadlineDaysRequired");
+    if (pListingType === "presale") {
+      if (goalValue <= 0) newErrors.goalValue = tVal("goalValueRequired");
+      if (deposit <= 0) newErrors.deposit = tVal("depositRequired");
+      if (slotsPerPerson <= 0) newErrors.slotsPerPerson = tVal("slotsPerPersonRequired");
+      if (deadlineDays <= 0) newErrors.deadlineDays = tVal("deadlineDaysRequired");
+    }
     
     // Validaciones opcionales pero con formato correcto
     if (pTotalUnits !== "" && (typeof pTotalUnits !== "number" || pTotalUnits <= 0)) {
@@ -235,8 +253,13 @@ export default function DevPanel() {
             propertyType: pPropertyType.trim() || undefined,
             propertyPrice: pPropertyPrice ? Number(pPropertyPrice) : undefined,
             developmentStage: pDevelopmentStage.trim() || undefined,
-            propertyDetails: Object.keys(pPropertyDetails).length > 0 ? pPropertyDetails : undefined
+            propertyDetails: Object.keys(pPropertyDetails).length > 0 ? pPropertyDetails : undefined,
+            listingType: pListingType
           };
+
+          if (pListingType === "sale") {
+            projectData.availabilityStatus = "available";
+          }
 
       if (editingProject) {
         // Actualizar proyecto existente
@@ -254,6 +277,7 @@ export default function DevPanel() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...projectData,
+            listingType: pListingType,
             developerId: devId
           })
         }).then(r => r.json());
@@ -263,7 +287,7 @@ export default function DevPanel() {
       }
 
       // Crear/actualizar ronda solo si no existe o si estamos editando
-      if (!editingProject?.round || editingProject) {
+      if (pListingType === "presale") {
         const roundData: any = {
           projectId,
           goalType,
@@ -285,7 +309,13 @@ export default function DevPanel() {
         if (!round.ok) throw new Error(round.error);
       }
       
-      show(editingProject ? t("messages.projectUpdated") : t("messages.projectCreated"), tMessages("success"));
+      const successMessage = editingProject
+        ? t("messages.projectUpdated")
+        : pListingType === "presale"
+          ? t("messages.projectCreated")
+          : t("messages.projectCreatedSale");
+
+      show(successMessage, tMessages("success"));
       
       resetForm();
       setView("list");
@@ -423,6 +453,15 @@ export default function DevPanel() {
             {errors.description && <p className="text-xs text-red-600 mt-1">{errors.description}</p>}
           </div>
 
+          <div>
+            <label className="text-sm font-medium">{t("fields.listingType")}</label>
+            <Select value={pListingType} onChange={e => handleListingTypeChange(e.target.value as ListingType)}>
+              <option value="presale">{t("listingType.presale")}</option>
+              <option value="sale">{t("listingType.sale")}</option>
+            </Select>
+            <p className="text-xs text-neutral-500 mt-1">{t(`listingTypeHelp.${pListingType}`)}</p>
+          </div>
+
           <ImageUploader images={pImages} onChange={(imgs) => { setPImages(imgs); setErrors({...errors, images: ""}); }} />
           {errors.images && <p className="text-xs text-red-600">{errors.images}</p>}
 
@@ -435,6 +474,11 @@ export default function DevPanel() {
               onChange={e => setPVideoUrl(e.target.value)}
             />
             <p className="text-xs text-neutral-500 mt-1">{t("fields.videoUrlHelp")}</p>
+            {videoUrlPreview ? (
+              <div className="mt-3">
+                <VideoPlayer url={videoUrlPreview} />
+              </div>
+            ) : null}
           </div>
 
           <hr className="my-4"/>
@@ -612,83 +656,98 @@ export default function DevPanel() {
 
           <ZoneEditor zone={pZone} onChange={setPZone} />
 
-          <hr className="my-4"/>
-          
-          <h3 className="font-medium text-lg">Ronda de preventa</h3>
-          <div className="grid sm:grid-cols-3 gap-3">
-            <div>
-              <label className="text-sm font-medium">Tipo meta</label>
-              <Select value={goalType} onChange={e => setGoalType(e.target.value as any)}>
-                <option value="reservations">Reservas</option>
-                <option value="amount">Monto</option>
-              </Select>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Valor meta *</label>
-              <Input
-                type="number"
-                min="1"
-                value={goalValue}
-                onChange={e => { setGoalValue(parseInt(e.target.value || "0", 10)); setErrors({...errors, goalValue: ""}); }}
-              />
-              {errors.goalValue && <p className="text-xs text-red-600 mt-1">{errors.goalValue}</p>}
-            </div>
-            <div>
-              <label className="text-sm font-medium">Depósito por slot *</label>
-              <Input
-                type="number"
-                min="1"
-                value={deposit}
-                onChange={e => { setDeposit(parseInt(e.target.value || "0", 10)); setErrors({...errors, deposit: ""}); }}
-              />
-              {errors.deposit && <p className="text-xs text-red-600 mt-1">{errors.deposit}</p>}
-            </div>
-            <div>
-              <label className="text-sm font-medium">Slots por persona *</label>
-              <Input
-                type="number"
-                min="1"
-                value={slotsPerPerson}
-                onChange={e => { setSlotsPerPerson(parseInt(e.target.value || "1", 10)); setErrors({...errors, slotsPerPerson: ""}); }}
-              />
-              {errors.slotsPerPerson && <p className="text-xs text-red-600 mt-1">{errors.slotsPerPerson}</p>}
-            </div>
-            <div>
-              <label className="text-sm font-medium">Días hasta fecha límite *</label>
-              <Input
-                type="number"
-                min="1"
-                value={deadlineDays}
-                onChange={e => { setDeadlineDays(parseInt(e.target.value || "14", 10)); setErrors({...errors, deadlineDays: ""}); }}
-              />
-              {errors.deadlineDays && <p className="text-xs text-red-600 mt-1">{errors.deadlineDays}</p>}
-            </div>
-            <div>
-              <label className="text-sm font-medium">Regla</label>
-              <Select value={rule} onChange={e => setRule(e.target.value as any)}>
-                <option value="all_or_nothing">Todo o nada</option>
-                <option value="partial">Parcial (≥70%)</option>
-              </Select>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Grupo de preventa (opcional)</label>
-              <Input
-                type="number"
-                min="1"
-                placeholder="Ej: 30"
-                value={groupSlots}
-                onChange={e => setGroupSlots(e.target.value ? parseInt(e.target.value, 10) : "")}
-              />
-              <p className="text-xs text-neutral-500 mt-1">Tamaño del grupo de preventa (slots)</p>
-            </div>
-          </div>
+          {pListingType === "presale" ? (
+            <>
+              <hr className="my-4"/>
+
+              <h3 className="font-medium text-lg">{t("roundInfo")}</h3>
+              <div className="grid sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-sm font-medium">{t("fields.goalType")}</label>
+                  <Select value={goalType} onChange={e => setGoalType(e.target.value as any)}>
+                    <option value="reservations">{t("goalTypes.reservations")}</option>
+                    <option value="amount">{t("goalTypes.amount")}</option>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">{t("fields.goalValue")}</label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={goalValue}
+                    onChange={e => { setGoalValue(parseInt(e.target.value || "0", 10)); setErrors({...errors, goalValue: ""}); }}
+                  />
+                  {errors.goalValue && <p className="text-xs text-red-600 mt-1">{errors.goalValue}</p>}
+                </div>
+                <div>
+                  <label className="text-sm font-medium">{t("fields.depositAmount")}</label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={deposit}
+                    onChange={e => { setDeposit(parseInt(e.target.value || "0", 10)); setErrors({...errors, deposit: ""}); }}
+                  />
+                  {errors.deposit && <p className="text-xs text-red-600 mt-1">{errors.deposit}</p>}
+                </div>
+                <div>
+                  <label className="text-sm font-medium">{t("fields.slotsPerPerson")}</label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={slotsPerPerson}
+                    onChange={e => { setSlotsPerPerson(parseInt(e.target.value || "1", 10)); setErrors({...errors, slotsPerPerson: ""}); }}
+                  />
+                  {errors.slotsPerPerson && <p className="text-xs text-red-600 mt-1">{errors.slotsPerPerson}</p>}
+                </div>
+                <div>
+                  <label className="text-sm font-medium">{t("fields.deadlineDays")}</label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={deadlineDays}
+                    onChange={e => { setDeadlineDays(parseInt(e.target.value || "14", 10)); setErrors({...errors, deadlineDays: ""}); }}
+                  />
+                  {errors.deadlineDays && <p className="text-xs text-red-600 mt-1">{errors.deadlineDays}</p>}
+                </div>
+                <div>
+                  <label className="text-sm font-medium">{t("fields.rule")}</label>
+                  <Select value={rule} onChange={e => setRule(e.target.value as any)}>
+                    <option value="all_or_nothing">{t("rules.allOrNothing")}</option>
+                    <option value="partial">{t("rules.partial")}</option>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">{t("fields.groupSlots")}</label>
+                  <Input
+                    type="number"
+                    min="1"
+                    placeholder={t("fields.groupSlotsPlaceholder")}
+                    value={groupSlots}
+                    onChange={e => setGroupSlots(e.target.value ? parseInt(e.target.value, 10) : "")}
+                  />
+                  <p className="text-xs text-neutral-500 mt-1">{t("fields.groupSlotsHelp")}</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <hr className="my-4"/>
+              <div className="rounded-md border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600">
+                {t("saleInfo")}
+              </div>
+            </>
+          )}
           
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="secondary" onClick={() => { resetForm(); setView("list"); }}>
               {tCommon("cancel")}
             </Button>
             <Button onClick={submit} disabled={loading}>
-              {loading ? t("messages.saving") : editingProject ? t("messages.updateProject") : t("messages.createProjectAndRound")}
+              {loading
+                ? t("messages.saving")
+                : editingProject
+                  ? t("messages.updateProject")
+                  : t(pListingType === "presale" ? "messages.createProjectAndRound" : "messages.createSaleProject")}
             </Button>
           </div>
         </CardContent>

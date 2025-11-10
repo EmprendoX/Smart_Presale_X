@@ -78,6 +78,7 @@ export default function Admin() {
   const t = useTranslations("admin");
   const tCommon = useTranslations("common");
   const tMessages = useTranslations("messages");
+  const tForms = useTranslations("forms");
   const tStatus = useTranslations("status");
   const locale = useLocale();
   const { show } = useToast();
@@ -111,6 +112,16 @@ export default function Admin() {
 
   const [communities, setCommunities] = useState<Community[]>([]);
   const [loadingCommunities, setLoadingCommunities] = useState(false);
+  const [creatingCommunity, setCreatingCommunity] = useState(false);
+  const [newCommunity, setNewCommunity] = useState({
+    name: "",
+    description: "",
+    scope: "campaign" as Community["scope"],
+    projectId: "",
+    roundId: "",
+    tags: "",
+    coverImage: ""
+  });
 
   const loadProjects = async () => {
     setLoadingProjects(true);
@@ -157,6 +168,16 @@ export default function Admin() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (newCommunity.scope !== "campaign") return;
+    const project = projects.find(p => p.id === newCommunity.projectId);
+    const nextRoundId = project?.round?.id || "";
+    setNewCommunity(prev => {
+      if (prev.roundId === nextRoundId) return prev;
+      return { ...prev, roundId: nextRoundId };
+    });
+  }, [newCommunity.scope, newCommunity.projectId, projects]);
+
   const filteredProjects = useMemo(() => {
     if (statusFilter === "all") return projects;
     return projects.filter(project => project.status === statusFilter);
@@ -171,6 +192,12 @@ export default function Admin() {
     const sale = projects.filter(p => p.listingType === "sale").length;
     return { total, draft, review, published, presale, sale };
   }, [projects]);
+
+  const presaleProjects = useMemo(() => projects.filter(project => project.listingType === "presale"), [projects]);
+  const selectedCommunityProject = useMemo(
+    () => presaleProjects.find(project => project.id === newCommunity.projectId) || null,
+    [presaleProjects, newCommunity.projectId]
+  );
 
   const listingBadge = (listingType: ListingType) => (
     <Badge color={listingType === "presale" ? "green" : "neutral"}>
@@ -653,8 +680,172 @@ export default function Admin() {
     </div>
   );
 
+  const handleCreateCommunity = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const name = newCommunity.name.trim();
+    const description = newCommunity.description.trim();
+    if (!name || !description) {
+      show(tForms("required"), tMessages("error"));
+      return;
+    }
+
+    setCreatingCommunity(true);
+    try {
+      const payload: any = {
+        name,
+        description,
+        scope: newCommunity.scope
+      };
+
+      if (newCommunity.scope === "campaign" && newCommunity.projectId) {
+        payload.projectId = newCommunity.projectId;
+      }
+      if (newCommunity.scope === "campaign" && newCommunity.roundId) {
+        payload.roundId = newCommunity.roundId;
+      }
+
+      const tags = newCommunity.tags.split(",").map(tag => tag.trim()).filter(Boolean);
+      if (tags.length) payload.tags = tags;
+
+      const coverImage = newCommunity.coverImage.trim();
+      if (coverImage) payload.coverImage = coverImage;
+
+      const res = await fetch("/api/communities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(r => r.json());
+
+      if (!res.ok) throw new Error(res.error || t("communities.form.error"));
+
+      show(t("communities.form.success"), tMessages("success"));
+      setNewCommunity(prev => ({
+        ...prev,
+        name: "",
+        description: "",
+        tags: "",
+        coverImage: "",
+        projectId: prev.scope === "campaign" ? prev.projectId : "",
+        roundId: prev.scope === "campaign" ? prev.roundId : ""
+      }));
+      await loadCommunities();
+    } catch (error: any) {
+      show(error.message || t("communities.form.error"), tMessages("error"));
+    } finally {
+      setCreatingCommunity(false);
+    }
+  };
+
   const communitiesTab = (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <h2 className="text-lg font-semibold">{t("communities.createTitle")}</h2>
+          <p className="text-sm text-neutral-600">{t("communities.createDescription")}</p>
+        </CardHeader>
+        <CardContent>
+          <form className="grid gap-3" onSubmit={handleCreateCommunity}>
+            <Input
+              value={newCommunity.name}
+              onChange={event => setNewCommunity(prev => ({ ...prev, name: event.target.value }))}
+              placeholder={t("communities.form.name")}
+              required
+            />
+            <textarea
+              className="rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm placeholder:text-neutral-400 focus:border-brand focus:ring-1 focus:ring-brand min-h-[90px]"
+              value={newCommunity.description}
+              onChange={event => setNewCommunity(prev => ({ ...prev, description: event.target.value }))}
+              placeholder={t("communities.form.description")}
+              required
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-sm font-medium">{t("communities.form.scope")}</label>
+                <Select
+                  value={newCommunity.scope}
+                  onChange={event => {
+                    const scope = event.target.value as Community["scope"];
+                    setNewCommunity(prev => ({
+                      ...prev,
+                      scope,
+                      projectId: scope === "campaign" ? prev.projectId : "",
+                      roundId: scope === "campaign" ? prev.roundId : ""
+                    }));
+                  }}
+                >
+                  <option value="campaign">{t("communities.form.scopeOptions.campaign")}</option>
+                  <option value="global">{t("communities.form.scopeOptions.global")}</option>
+                </Select>
+                <p className="mt-1 text-xs text-neutral-500">{t("communities.form.scopeHelp")}</p>
+              </div>
+              {newCommunity.scope === "campaign" ? (
+                <div>
+                  <label className="text-sm font-medium">{t("communities.form.project")}</label>
+                  <Select
+                    value={newCommunity.projectId}
+                    onChange={event => setNewCommunity(prev => ({ ...prev, projectId: event.target.value }))}
+                    disabled={presaleProjects.length === 0}
+                  >
+                    <option value="">{tForms("selectOption")}</option>
+                    {presaleProjects.map(project => (
+                      <option key={project.id} value={project.id}>{project.name}</option>
+                    ))}
+                  </Select>
+                  <p className="mt-1 text-xs text-neutral-500">{t("communities.form.projectHelp")}</p>
+                </div>
+              ) : null}
+              {newCommunity.scope === "campaign" ? (
+                <div>
+                  <label className="text-sm font-medium">{t("communities.form.round")}</label>
+                  <Select
+                    value={newCommunity.roundId}
+                    onChange={event => setNewCommunity(prev => ({ ...prev, roundId: event.target.value }))}
+                    disabled={!selectedCommunityProject?.round}
+                  >
+                    <option value="">{tForms("selectOption")}</option>
+                    {selectedCommunityProject?.round ? (
+                      <option value={selectedCommunityProject.round.id}>
+                        {selectedCommunityProject.round.goalType === "reservations"
+                          ? `${selectedCommunityProject.round.goalValue} ${t("projects.reservations")}`
+                          : fmtCurrency(selectedCommunityProject.round.goalValue, selectedCommunityProject.currency || "USD", locale)}
+                      </option>
+                    ) : null}
+                  </Select>
+                  <p className="mt-1 text-xs text-neutral-500">{t("communities.form.roundHelp")}</p>
+                </div>
+              ) : null}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-sm font-medium">{t("communities.form.tags")}</label>
+                <Input
+                  value={newCommunity.tags}
+                  onChange={event => setNewCommunity(prev => ({ ...prev, tags: event.target.value }))}
+                  placeholder="tag1, tag2"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">{t("communities.form.coverImage")}</label>
+                <Input
+                  type="url"
+                  value={newCommunity.coverImage}
+                  onChange={event => setNewCommunity(prev => ({ ...prev, coverImage: event.target.value }))}
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                disabled={creatingCommunity || !newCommunity.name.trim() || !newCommunity.description.trim()}
+              >
+                {creatingCommunity ? t("communities.form.creating") : t("communities.form.submit")}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+
       {loadingCommunities ? (
         <p className="text-sm text-neutral-600">{tCommon("loading")}</p>
       ) : communities.length === 0 ? (
