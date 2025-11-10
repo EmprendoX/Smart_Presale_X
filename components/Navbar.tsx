@@ -111,7 +111,7 @@ export function Navbar() {
             Smart <span className="text-brand">Pre‑Sale</span>
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">
-            <Link href="/" className="hover:underline">{t("projects")}</Link>
+            <Link href="/projects" className="hover:underline">{t("projects")}</Link>
             <Link href="/dashboard" className="hover:underline">{t("myReservations")}</Link>
             <Link href="/dev" className="hover:underline">{t("devPanel")}</Link>
             <Link href="/community" className="hover:underline">{t("communities")}</Link>

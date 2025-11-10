@@ -13,6 +13,7 @@ const defaultMessages = {
     myReservations: "Mis Reservas",
     devPanel: "Panel Dev",
     admin: "Admin",
+    communities: "Comunidades",
     language: "Idioma",
     spanish: "Español",
     english: "English",
