@@ -43,6 +43,55 @@
   },
   "home": {
     "seo": {
+      "title": "Smart Presale X · Elige cómo quieres comprar",
+      "description": "Explora propiedades de entrega inmediata o únete a grupos Smart Presale según tus objetivos."
+    },
+    "hero": {
+      "title": "Elige cómo quieres comprar",
+      "subtitle": "Entrega inmediata o Smart Presale.",
+      "ctaImmediate": "Ver entrega inmediata",
+      "ctaPresale": "Entrar a Smart Presale"
+    },
+    "shortcuts": {
+      "title": "Atajos principales",
+      "subtitle": "Accede rápido a la experiencia que necesitas.",
+      "immediate": {
+        "title": "Entrega inmediata",
+        "description": "Propiedades disponibles para entrega inmediata.",
+        "cta": "Ver propiedades"
+      },
+      "presale": {
+        "title": "Smart Presale",
+        "description": "Sistema de preventa. Revisa y únete a grupos de preventa.",
+        "cta": "Ver grupos de preventa"
+      }
+    },
+    "search": {
+      "title": "Búsqueda",
+      "subtitle": "Escribe zona o desarrollo…",
+      "placeholder": "Zona o desarrollo",
+      "cta": "Buscar"
+    },
+    "sections": {
+      "immediateHeading": "Entrega inmediata",
+      "immediateDescription": "Propiedades disponibles para entrega inmediata.",
+      "immediateEmpty": "No hay propiedades de entrega inmediata por ahora.",
+      "presaleHeading": "Smart Presale",
+      "presaleDescription": "Sistema de preventa. Revisa y únete a grupos de preventa.",
+      "presaleEmpty": "No hay grupos de preventa disponibles por ahora."
+    },
+    "quickLinks": {
+      "title": "Llamados rápidos",
+      "immediate": "Ver todas las propiedades de entrega inmediata",
+      "presale": "Ver todos los grupos de preventa"
+    },
+    "listing": {
+      "price": "Precio: {price}",
+      "viewDetail": "Ver detalle →"
+    }
+  },
+  "projects": {
+    "seo": {
       "title": "Smart Presale X · Preventas y propiedades listas para escriturar",
       "description": "Descubre desarrollos verificados con automatizaciones listas, comunidades privadas y agentes IA para acompañar a tus compradores."
     },

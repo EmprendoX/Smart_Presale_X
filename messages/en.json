@@ -43,6 +43,55 @@
   },
   "home": {
     "seo": {
+      "title": "Smart Presale X · Choose your buying path",
+      "description": "Explore immediate delivery properties or join Smart Presale groups tailored to your goals."
+    },
+    "hero": {
+      "title": "Choose how you want to buy",
+      "subtitle": "Immediate delivery or Smart Presale.",
+      "ctaImmediate": "View immediate delivery",
+      "ctaPresale": "Enter Smart Presale"
+    },
+    "shortcuts": {
+      "title": "Main shortcuts",
+      "subtitle": "Jump right to the experience you need.",
+      "immediate": {
+        "title": "Immediate delivery",
+        "description": "Properties available for immediate delivery.",
+        "cta": "View properties"
+      },
+      "presale": {
+        "title": "Smart Presale",
+        "description": "Presale system. Review and join presale groups.",
+        "cta": "View presale groups"
+      }
+    },
+    "search": {
+      "title": "Search",
+      "subtitle": "Type a zone or development to get started.",
+      "placeholder": "Area or development",
+      "cta": "Search"
+    },
+    "sections": {
+      "immediateHeading": "Immediate delivery",
+      "immediateDescription": "Properties available for immediate delivery.",
+      "immediateEmpty": "No immediate delivery properties available right now.",
+      "presaleHeading": "Smart Presale",
+      "presaleDescription": "Presale system. Review and join presale groups.",
+      "presaleEmpty": "No presale groups available right now."
+    },
+    "quickLinks": {
+      "title": "Quick links",
+      "immediate": "View all immediate delivery properties",
+      "presale": "View all presale groups"
+    },
+    "listing": {
+      "price": "Price: {price}",
+      "viewDetail": "View detail →"
+    }
+  },
+  "projects": {
+    "seo": {
       "title": "Smart Presale X · Presale launches and ready-to-close inventory",
       "description": "Launch verified developments with automation-ready workflows, private communities and AI co-pilots for every buyer journey."
     },
