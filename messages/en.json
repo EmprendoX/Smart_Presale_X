@@ -283,6 +283,15 @@
     "financialInfo": "Financial Information (optional)",
     "propertyDetails": "Property Details (optional)",
     "roundInfo": "Presale round",
+    "saleInfo": "Move-in ready listings don't need a presale round. Save the project and publish it from Admin.",
+    "listingType": {
+      "presale": "Presale",
+      "sale": "Direct sale"
+    },
+    "listingTypeHelp": {
+      "presale": "Activate a presale round with deposits and limited slots for early reservations.",
+      "sale": "Publish ready-to-close inventory without managing presale rounds."
+    },
     "projectDocuments": "Project documents",
     "projectDocumentsDescription": "Upload PDF documents with a descriptive title",
     "loadingDocuments": "Loading documents...",
@@ -297,6 +306,7 @@
       "description": "Description *",
       "descriptionPlaceholder": "Describe the project...",
       "images": "Images (URLs or upload files)",
+      "listingType": "Inventory type *",
       "videoUrl": "Video URL (optional)",
       "videoUrlPlaceholder": "https://youtube.com/watch?v=...",
       "videoUrlHelp": "Promotional video URL (YouTube, Vimeo, etc.)",
@@ -381,11 +391,13 @@
     "messages": {
       "projectUpdated": "Project updated successfully",
       "projectCreated": "Project and round created successfully. Send to review/publication from Admin.",
+      "projectCreatedSale": "Direct-sale listing created successfully. Admin can publish it right away.",
       "projectSaveError": "Could not save project",
       "loadError": "Error loading projects",
       "saving": "Saving...",
       "updateProject": "Update project",
-      "createProjectAndRound": "Create project and round"
+      "createProjectAndRound": "Create project and round",
+      "createSaleProject": "Save direct-sale listing"
     },
     "round": {
       "round": "Round",
@@ -520,6 +532,28 @@
       "scope": {
         "global": "Global",
         "campaign": "Campaign"
+      },
+      "createTitle": "Create community",
+      "createDescription": "Segment presale cohorts or keep a general community for your brand in one place.",
+      "form": {
+        "name": "Community name *",
+        "description": "Description *",
+        "scope": "Community type",
+        "scopeHelp": "Use \"Campaign\" for specific presale cohorts or \"General\" for your broader audience.",
+        "scopeOptions": {
+          "campaign": "Presale campaign",
+          "global": "General"
+        },
+        "project": "Associated project (optional)",
+        "projectHelp": "Select the presale project this group belongs to.",
+        "round": "Round (optional)",
+        "roundHelp": "Link the presale round if you want to segment by group.",
+        "tags": "Tags (comma separated)",
+        "coverImage": "Cover image (optional URL)",
+        "submit": "Create community",
+        "creating": "Creating...",
+        "success": "Community created successfully",
+        "error": "Could not create community"
       }
     },
     "messages": {
