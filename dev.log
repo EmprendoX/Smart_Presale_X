@@ -14,3 +14,96 @@
  ○ Compiling /[locale] ...
  ✓ Compiled /[locale] in 1403ms
  GET /es 404 in 1707ms
+ ✓ Compiled in 93ms
+ ✓ Compiled in 146ms
+ ✓ Compiled /[locale] in 57ms
+ GET /es 200 in 220ms
+ GET /en?_rsc=1tiop 200 in 29ms
+ ✓ Compiled /[locale]/p/[slug] in 221ms
+ GET /en/p/land-playa-nueva-romana?_rsc=qh1a0 200 in 34ms
+ ✓ Compiled /api/secondary in 99ms
+ GET /api/secondary?projectId=798c031f-13b0-4a81-8af2-abdca051f3fc 200 in 134ms
+ GET /api/secondary?projectId=798c031f-13b0-4a81-8af2-abdca051f3fc 200 in 133ms
+ ✓ Compiled /api/reservations in 17ms
+ GET /api/reservations?userId=u_admin_1 200 in 30ms
+ GET /api/reservations?userId=u_admin_1 200 in 31ms
+ ✓ Compiled /[locale]/admin in 250ms
+ ✓ Compiled /api/projects in 21ms
+ GET /api/projects 200 in 40ms
+ GET /api/projects 200 in 40ms
+ ✓ Compiled /[locale]/dev in 151ms
+ GET /api/projects 200 in 17ms
+ GET /api/projects 200 in 19ms
+ ✓ Compiled /[locale]/dashboard in 124ms
+ GET /api/reservations?userId=u_admin_1 200 in 19ms
+ GET /api/reservations?userId=u_admin_1 200 in 20ms
+ GET /api/projects 200 in 14ms
+ GET /api/projects 200 in 15ms
+ GET /api/reservations?userId=u_admin_1 200 in 18ms
+ GET /api/reservations?userId=u_admin_1 200 in 20ms
+ GET /api/projects 200 in 17ms
+ GET /api/projects 200 in 17ms
+ GET /api/projects 200 in 19ms
+ GET /api/projects 200 in 20ms
+IntlError: INSUFFICIENT_PATH: Message at `project.status` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages
+    at getFallbackFromErrorAndNotify (/Users/agustinpascalsierra/smart_presale/.next/server/chunks/ssr/node_modules_ba4d37._.js:4795:23)
+    at translateBaseFn (/Users/agustinpascalsierra/smart_presale/.next/server/chunks/ssr/node_modules_ba4d37._.js:4832:20)
+    at translateFn (/Users/agustinpascalsierra/smart_presale/.next/server/chunks/ssr/node_modules_ba4d37._.js:4877:24)
+    at FinancialHeader (/Users/agustinpascalsierra/smart_presale/.next/server/chunks/ssr/_a68bf6._.js:147:29)
+    at au (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:10446)
+    at /Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:15122
+    at aw (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at aw (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46505)
+    at a_ (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at aj (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at aC (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:52874)
+    at a_ (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50095)
+    at aj (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at /Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42336
+    at aw (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42822)
+    at a_ (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at a_ (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50067)
+    at /Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:58612
+    at /Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59270
+    at aN (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59278)
+    at Timeout._onTimeout (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6939)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7) {
+  code: 'INSUFFICIENT_PATH',
+  originalMessage: 'Message at `project.status` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
+}
+ GET /en/p/land-playa-nueva-romana 200 in 71ms
+ GET /en/admin 200 in 70ms
+ GET /api/projects 200 in 38ms
+ GET /api/projects 200 in 43ms
+ GET /en?_rsc=m7t4p 200 in 30ms
+ GET /en/p/land-playa-nueva-romana?_rsc=qh1a0 200 in 26ms
+IntlError: INSUFFICIENT_PATH: Message at `project.status` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages
+    at getFallbackFromErrorAndNotify (/Users/agustinpascalsierra/smart_presale/.next/server/chunks/ssr/node_modules_ba4d37._.js:4795:23)
+    at translateBaseFn (/Users/agustinpascalsierra/smart_presale/.next/server/chunks/ssr/node_modules_ba4d37._.js:4832:20)
+    at translateFn (/Users/agustinpascalsierra/smart_presale/.next/server/chunks/ssr/node_modules_ba4d37._.js:4877:24)
+    at FinancialHeader (/Users/agustinpascalsierra/smart_presale/.next/server/chunks/ssr/_a68bf6._.js:147:29)
+    at au (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:10446)
+    at /Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:15122
+    at aw (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:16908)
+    at aw (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:46505)
+    at a_ (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at aj (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at aC (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:52874)
+    at a_ (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50095)
+    at aj (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:53793)
+    at /Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42336
+    at aw (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:42822)
+    at a_ (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:49776)
+    at a_ (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:50067)
+    at /Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:58612
+    at /Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59270
+    at aN (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:59278)
+    at Timeout._onTimeout (/Users/agustinpascalsierra/smart_presale/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:6939)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7) {
+  code: 'INSUFFICIENT_PATH',
+  originalMessage: 'Message at `project.status` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
+}
+ GET /en/p/land-playa-nueva-romana 200 in 60ms
+ GET /en 200 in 42ms

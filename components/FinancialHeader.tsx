@@ -33,7 +33,7 @@ export default function FinancialHeader({ name, ticker, deadlineAt, percent, kpi
           <div className="text-xs text-neutral-500">{ticker || "SPS:UNLISTED"}</div>
           <h1 className="text-2xl font-semibold">{name}</h1>
         </div>
-        <Badge color={statusColor}>{t("status")}: {t(`status.${status}`)}</Badge>
+        <Badge color={statusColor}>{tCommon("status")}: {t(`status.${status}`)}</Badge>
       </div>
       <div className="mt-3">
         <Progress value={percent} />
