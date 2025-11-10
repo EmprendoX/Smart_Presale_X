@@ -28,6 +28,7 @@ export default function DevPanel() {
   const tMessages = useTranslations("messages");
   const tStatus = useTranslations("status");
   const tVal = useTranslations("dev.validation");
+  const tProject = useTranslations("project");
   const locale = useLocale();
   const { show } = useToast();
   const [devId] = useState("d1");
@@ -139,13 +140,13 @@ export default function DevPanel() {
     }
   };
 
-  const resetForm = () => {
+  const resetForm = (initialListingType: ListingType = "presale") => {
     setPName("");
     setPCity("CDMX");
     setPCountry("MX");
     setPCurrency("USD");
     setPDesc("");
-    setPListingType("presale");
+    setPListingType(initialListingType);
     setPImages([]);
     setPVideoUrl("");
     setPTotalUnits("");
@@ -181,7 +182,11 @@ export default function DevPanel() {
     setPSpecs(project.specs || {});
     setPZone(project.zone || {});
     setPPropertyType(project.propertyType || "");
-    setPPropertyPrice(project.propertyPrice || "");
+    if (project.listingType === "sale") {
+      setPPropertyPrice(project.askingPrice ?? project.propertyPrice ?? "");
+    } else {
+      setPPropertyPrice(project.propertyPrice || "");
+    }
     setPDevelopmentStage(project.developmentStage || "");
     setPPropertyDetails(project.propertyDetails || {});
     
@@ -198,6 +203,11 @@ export default function DevPanel() {
     }
     
     setView("edit");
+  };
+
+  const startCreate = (type: ListingType) => {
+    resetForm(type);
+    setView("create");
   };
 
   const validate = (): boolean => {
@@ -259,6 +269,9 @@ export default function DevPanel() {
 
           if (pListingType === "sale") {
             projectData.availabilityStatus = "available";
+            projectData.askingPrice = pPropertyPrice ? Number(pPropertyPrice) : undefined;
+          } else {
+            projectData.askingPrice = undefined;
           }
 
       if (editingProject) {
@@ -338,67 +351,159 @@ export default function DevPanel() {
   };
 
   if (view === "list") {
+    const presaleProjects = projects.filter(project => project.listingType !== "sale");
+    const saleProjects = projects.filter(project => project.listingType === "sale");
+
+    const renderProjectCard = (project: ProjectWithRound) => {
+      const isPresale = project.listingType !== "sale";
+      const salePrice = project.askingPrice ?? project.propertyPrice;
+      let availability: string | undefined;
+      if (project.availabilityStatus) {
+        try {
+          availability = tProject(`availability.${project.availabilityStatus}` as const);
+        } catch {
+          availability = project.availabilityStatus;
+        }
+      }
+
+      return (
+        <Card key={project.id}>
+          <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex-1 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="font-medium text-lg">{project.name}</div>
+                <Badge color={isPresale ? "green" : "neutral"}>
+                  {t(`listingType.${isPresale ? "presale" : "sale"}`)}
+                </Badge>
+                {getStatusBadge(project.status)}
+              </div>
+              <div className="text-sm text-neutral-600">
+                {project.city}, {project.country} • {project.currency}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={() => startEdit(project)} variant="secondary" size="sm">
+                {tCommon("edit")}
+              </Button>
+              <Link
+                href={`/p/${project.slug}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-brand hover:underline flex items-center"
+              >
+                {t("round.view")}
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-neutral-700">{project.description}</p>
+            {isPresale ? (
+              project.round ? (
+                <div className="text-sm text-neutral-600">
+                  {t("round.round")}: {project.round.goalType === "reservations"
+                    ? `${project.round.goalValue} ${t("goalTypes.reservations").toLowerCase()}`
+                    : fmtCurrency(project.round.goalValue, project.currency, locale)} •
+                  {t("round.deposit")}: {fmtCurrency(project.round.depositAmount, project.currency, locale)}
+                </div>
+              ) : (
+                <div className="text-sm text-neutral-500">{t("round.noRound")}</div>
+              )
+            ) : (
+              <div className="text-sm text-neutral-600 space-y-1">
+                {salePrice ? (
+                  <div>{t("sections.salePrice", { price: fmtCurrency(salePrice, project.currency, locale) })}</div>
+                ) : (
+                  <div className="text-neutral-500">{t("sections.saleMissingPrice")}</div>
+                )}
+                {availability && (
+                  <div>{t("sections.saleAvailability", { status: availability })}</div>
+                )}
+                {project.propertyType && (
+                  <div>{t("sections.saleType", { type: project.propertyType })}</div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      );
+    };
+
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl">{t("title")}</h1>
-          <Button onClick={() => { resetForm(); setView("create"); }}>
-            {t("newProject")}
-          </Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl">{t("title")}</h1>
+            <p className="text-sm text-neutral-600">{t("listDescription")}</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => startCreate("presale")}>
+              {t("newPresale")}
+            </Button>
+            <Button onClick={() => startCreate("sale")} variant="secondary">
+              {t("newSale")}
+            </Button>
+          </div>
         </div>
 
         {loading ? (
           <p className="text-sm text-neutral-600">{tCommon("loading")}</p>
         ) : projects.length === 0 ? (
           <Card>
-            <CardContent className="py-8 text-center">
-              <p className="text-neutral-600 mb-4">{t("noProjects")}</p>
-              <Button onClick={() => { resetForm(); setView("create"); }}>
-                {t("createFirstProject")}
-              </Button>
+            <CardContent className="py-8 text-center space-y-4">
+              <p className="text-neutral-600">{t("noProjects")}</p>
+              <div className="flex flex-col sm:flex-row sm:justify-center gap-2">
+                <Button onClick={() => startCreate("presale")}>
+                  {t("newPresale")}
+                </Button>
+                <Button onClick={() => startCreate("sale")} variant="secondary">
+                  {t("newSale")}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4">
-            {projects.map((p: any) => (
-              <Card key={p.id}>
-                <CardHeader className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <div className="font-medium text-lg">{p.name}</div>
-                      {getStatusBadge(p.status)}
-                    </div>
-                    <div className="text-sm text-neutral-600 mt-1">
-                      {p.city}, {p.country} • {p.currency}
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={() => startEdit(p)} variant="secondary" size="sm">
-                      {tCommon("edit")}
+          <div className="space-y-8">
+            <section className="space-y-4">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-xl font-semibold">{t("sections.presaleHeading")}</h2>
+                <p className="text-sm text-neutral-600">{t("sections.presaleSubheading")}</p>
+              </div>
+              {presaleProjects.length === 0 ? (
+                <Card>
+                  <CardContent className="py-6 text-center space-y-3">
+                    <p className="text-neutral-600">{t("sections.noPresale")}</p>
+                    <Button onClick={() => startCreate("presale")} size="sm">
+                      {t("newPresale")}
                     </Button>
-                    <Link 
-                      href={`/p/${p.slug}`} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="text-sm text-brand hover:underline flex items-center"
-                    >
-                      {t("round.view")}
-                    </Link>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-neutral-700 mb-3">{p.description}</p>
-                  {p.round ? (
-                    <div className="text-sm text-neutral-600">
-                      {t("round.round")}: {p.round.goalType === "reservations" ? `${p.round.goalValue} ${t("goalTypes.reservations").toLowerCase()}` : fmtCurrency(p.round.goalValue, p.currency, locale)} • 
-                      {t("round.deposit")}: {fmtCurrency(p.round.depositAmount, p.currency, locale)}
-                    </div>
-                  ) : (
-                    <div className="text-sm text-neutral-500">{t("round.noRound")}</div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid gap-4">
+                  {presaleProjects.map(renderProjectCard)}
+                </div>
+              )}
+            </section>
+
+            <section className="space-y-4">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-xl font-semibold">{t("sections.saleHeading")}</h2>
+                <p className="text-sm text-neutral-600">{t("sections.saleSubheading")}</p>
+              </div>
+              {saleProjects.length === 0 ? (
+                <Card>
+                  <CardContent className="py-6 text-center space-y-3">
+                    <p className="text-neutral-600">{t("sections.noSale")}</p>
+                    <Button onClick={() => startCreate("sale")} size="sm" variant="secondary">
+                      {t("newSale")}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid gap-4">
+                  {saleProjects.map(renderProjectCard)}
+                </div>
+              )}
+            </section>
           </div>
         )}
       </div>

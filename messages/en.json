@@ -273,6 +273,9 @@
   "dev": {
     "title": "Developer Panel",
     "newProject": "+ New project",
+    "newPresale": "+ New presale",
+    "newSale": "+ New direct-sale property",
+    "listDescription": "Manage presale campaigns and move-in-ready inventory from one place.",
     "myProjects": "My projects",
     "noProjects": "You haven't created any projects yet.",
     "createFirstProject": "Create first project",
@@ -400,10 +403,22 @@
       "createSaleProject": "Save direct-sale listing"
     },
     "round": {
-      "round": "Round",
-      "deposit": "Deposit",
-      "noRound": "No associated round",
-      "view": "View →"
+    "round": "Round",
+    "deposit": "Deposit",
+    "noRound": "No associated round",
+    "view": "View →"
+    },
+    "sections": {
+      "presaleHeading": "Presale campaigns",
+      "presaleSubheading": "Track active rounds, goals and deposits.",
+      "saleHeading": "Direct-sale properties",
+      "saleSubheading": "Upload inventory ready to close without creating rounds.",
+      "noPresale": "You haven't created any presale campaigns yet.",
+      "noSale": "You haven't added any direct-sale properties yet.",
+      "salePrice": "Asking price: {price}",
+      "saleAvailability": "Availability: {status}",
+      "saleType": "Property type: {type}",
+      "saleMissingPrice": "Add an asking price to show it to buyers."
     }
   },
   "admin": {

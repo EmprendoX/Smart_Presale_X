@@ -273,6 +273,9 @@
   "dev": {
     "title": "Panel Desarrollador",
     "newProject": "+ Nuevo proyecto",
+    "newPresale": "+ Nueva preventa",
+    "newSale": "+ Nueva propiedad en venta",
+    "listDescription": "Administra tus campañas de preventa y el inventario listo para venta directa.",
     "myProjects": "Mis proyectos",
     "noProjects": "Aún no has creado ningún proyecto.",
     "createFirstProject": "Crear primer proyecto",
@@ -400,10 +403,22 @@
       "createSaleProject": "Guardar propiedad en venta"
     },
     "round": {
-      "round": "Ronda",
-      "deposit": "Depósito",
-      "noRound": "Sin ronda asociada",
-      "view": "Ver →"
+    "round": "Ronda",
+    "deposit": "Depósito",
+    "noRound": "Sin ronda asociada",
+    "view": "Ver →"
+    },
+    "sections": {
+      "presaleHeading": "Campañas de preventa",
+      "presaleSubheading": "Genera reservas anticipadas y monitorea tus rondas activas.",
+      "saleHeading": "Propiedades en venta directa",
+      "saleSubheading": "Publica inventario listo para entrega sin necesidad de rondas.",
+      "noPresale": "Aún no has creado campañas de preventa.",
+      "noSale": "Todavía no has cargado propiedades para venta directa.",
+      "salePrice": "Precio de venta: {price}",
+      "saleAvailability": "Disponibilidad: {status}",
+      "saleType": "Tipo de propiedad: {type}",
+      "saleMissingPrice": "Agrega un precio de venta para mostrarlo a los compradores."
     }
   },
   "admin": {
