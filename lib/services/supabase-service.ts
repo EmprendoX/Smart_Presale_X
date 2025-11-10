@@ -1,5 +1,18 @@
 import { DatabaseService } from './db';
-import { Project, Round, Reservation, Transaction, ResearchItem, PricePoint, SecondaryListing, Trade, ProjectDocument } from '../types';
+import {
+  Project,
+  Round,
+  Reservation,
+  Transaction,
+  ResearchItem,
+  PricePoint,
+  SecondaryListing,
+  Trade,
+  ProjectDocument,
+  Community,
+  AutomationWorkflow,
+  IntelligentAgent,
+} from '../types';
 
 /**
  * Placeholder para el servicio de Supabase
@@ -192,6 +205,53 @@ export class SupabaseService implements DatabaseService {
   }
 
   async deleteDocument(id: string): Promise<boolean> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async getCommunities(): Promise<Community[]> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async getCommunityBySlug(slug: string): Promise<Community | null> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async getCommunitiesByProjectId(projectId: string): Promise<Community[]> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async createCommunity(community: Community): Promise<Community> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async updateCommunity(id: string, updates: Partial<Community>): Promise<Community | null> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async getAutomations(): Promise<AutomationWorkflow[]> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async createAutomation(workflow: AutomationWorkflow): Promise<AutomationWorkflow> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async updateAutomation(
+    id: string,
+    updates: Partial<AutomationWorkflow>
+  ): Promise<AutomationWorkflow | null> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async getAgents(): Promise<IntelligentAgent[]> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async createAgent(agent: IntelligentAgent): Promise<IntelligentAgent> {
+    throw new Error('Supabase service not configured.');
+  }
+
+  async updateAgent(id: string, updates: Partial<IntelligentAgent>): Promise<IntelligentAgent | null> {
     throw new Error('Supabase service not configured.');
   }
 }

@@ -1,5 +1,15 @@
+import { Metadata } from "next";
+import Script from "next/script";
 import { notFound } from "next/navigation";
-import { findProjectBySlug, findRoundByProject, byRoundReservations } from "@/lib/mockdb";
+import {
+  findProjectBySlug,
+  findRoundByProject,
+  byRoundReservations,
+  listCommunities,
+  listCommunitiesByProject,
+  listAutomations,
+  listAgents
+} from "@/lib/mockdb";
 import FinancialHeader from "@/components/FinancialHeader";
 import Gallery from "@/components/Gallery";
 import FeatureGrid from "@/components/FeatureGrid";
@@ -19,37 +29,107 @@ import { db } from "@/lib/config";
 
 export const revalidate = 0;
 
-export default async function ProjectPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
-  const { locale, slug } = await params;
-  const t = await getTranslations();
+type Params = { locale: string; slug: string };
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const project = await findProjectBySlug(params.slug);
+  if (!project) return {};
+  const title = project.seo?.title || `${project.name} · Smart Presale X`;
+  const description = project.seo?.description || project.description;
+  const image = project.seo?.image || project.images?.[0];
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: image ? [image] : undefined,
+      type: "website"
+    },
+    alternates: {
+      canonical: `/${params.locale}/p/${project.slug}`
+    }
+  };
+}
+
+const availabilityLabel = (status: string | undefined, t: (key: string) => string) => {
+  if (!status) return undefined;
+  return t(`project.availability.${status}` as const);
+};
+
+export default async function ProjectPage({ params }: { params: Params }) {
+  const { locale, slug } = params;
+  const t = await getTranslations({ locale });
   const project = await findProjectBySlug(slug);
   if (!project) return notFound();
 
-  const round = await findRoundByProject(project.id);
+  const round = project.listingType === "presale" ? await findRoundByProject(project.id) : null;
   const reservations = round ? await byRoundReservations(round.id) : [];
   const summary = round ? computeProgress(round, reservations) : null;
 
-  const priceHistory = await db.getPriceHistoryByProjectId(project.id);
-  const research = await db.getResearchByProjectId(project.id);
-  const documents = await db.getDocumentsByProjectId(project.id);
+  const [priceHistory, research, documents, communities, projectCommunities, automations, agents] = await Promise.all([
+    db.getPriceHistoryByProjectId(project.id),
+    db.getResearchByProjectId(project.id),
+    db.getDocumentsByProjectId(project.id),
+    listCommunities(),
+    listCommunitiesByProject(project.id),
+    listAutomations(),
+    listAgents()
+  ]);
+
+  const assignedAgents = project.agentIds?.length
+    ? agents.filter(agent => project.agentIds?.includes(agent.id))
+    : [];
+  const projectAutomations = automations.filter(auto => !auto.projectId || auto.projectId === project.id);
+  const globalCommunity = communities.find(c => c.scope === "global");
+  const availability = availabilityLabel(project.availabilityStatus, t);
 
   const kpis = (() => {
     const list: { label: string; value: string }[] = [];
     if (project.totalUnits) {
       const confirmed = summary?.confirmedSlots ?? 0;
-      const available = project.totalUnits - confirmed;
+      const availableUnits = project.totalUnits - confirmed;
       list.push({ label: t("project.kpis.totalUnits"), value: String(project.totalUnits) });
-      list.push({ label: t("project.kpis.available"), value: String(Math.max(available, 0)) });
+      list.push({ label: t("project.kpis.available"), value: String(Math.max(availableUnits, 0)) });
     }
-    if (round?.groupSlots) list.push({ label: t("project.kpis.presaleGroup"), value: String(round.groupSlots) });
-    if (round) list.push({ label: t("project.kpis.depositPerSlot"), value: fmtCurrency(round.depositAmount, project.currency, locale) });
-    if (round) list.push({ label: t("project.kpis.deadline"), value: shortDate(round.deadlineAt, locale) });
+    if (project.listingType === "sale" && project.askingPrice) {
+      list.push({ label: t("project.propertyCost"), value: fmtCurrency(project.askingPrice, project.currency, locale) });
+    }
+    if (round?.groupSlots) {
+      list.push({ label: t("project.kpis.presaleGroup"), value: String(round.groupSlots) });
+    }
+    if (round) {
+      list.push({ label: t("project.kpis.depositPerSlot"), value: fmtCurrency(round.depositAmount, project.currency, locale) });
+      list.push({ label: t("project.kpis.deadline"), value: shortDate(round.deadlineAt, locale) });
+    }
+    if (project.developmentStage) {
+      list.push({ label: t("project.developmentStage"), value: project.developmentStage });
+    }
     return list;
   })();
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': project.listingType === 'presale' ? 'PreSale' : 'Offer',
+    name: project.name,
+    description: project.description,
+    image: project.images,
+    url: `https://smart-presale.example/${locale}/p/${project.slug}`,
+    seller: {
+      '@type': 'Organization',
+      name: 'Smart Presale X'
+    },
+    offers: project.listingType === 'sale' && project.askingPrice ? {
+      '@type': 'Offer',
+      price: project.askingPrice,
+      priceCurrency: project.currency
+    } : undefined
+  };
+
   const tabOverview = (
     <div className="space-y-6">
-      {(project.propertyType || project.propertyPrice || project.developmentStage || project.propertyDetails) && (
+      {(project.propertyType || project.askingPrice || project.developmentStage || project.propertyDetails) && (
         <Card>
           <CardHeader><h3 className="text-lg">{t("project.propertyInfo")}</h3></CardHeader>
           <CardContent>
@@ -60,12 +140,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
                   <div className="font-medium text-base mt-1">{project.propertyType}</div>
                 </div>
               )}
-              {project.propertyPrice && (
+              {project.askingPrice && (
                 <div className="rounded-lg border p-3">
                   <div className="text-xs text-neutral-500">{t("project.propertyCost")}</div>
-                  <div className="font-medium text-base mt-1">
-                    {fmtCurrency(project.propertyPrice, project.currency, locale)}
-                  </div>
+                  <div className="font-medium text-base mt-1">{fmtCurrency(project.askingPrice, project.currency, locale)}</div>
                 </div>
               )}
               {project.developmentStage && (
@@ -86,28 +164,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
                   <div className="font-medium text-base mt-1">{project.propertyDetails.bathrooms}</div>
                 </div>
               )}
-              {project.propertyDetails?.halfBathrooms !== undefined && (
-                <div className="rounded-lg border p-3">
-                  <div className="text-xs text-neutral-500">{t("project.halfBathrooms")}</div>
-                  <div className="font-medium text-base mt-1">{project.propertyDetails.halfBathrooms}</div>
-                </div>
-              )}
               {project.propertyDetails?.surfaceArea !== undefined && (
                 <div className="rounded-lg border p-3">
                   <div className="text-xs text-neutral-500">{t("project.surfaceArea")}</div>
                   <div className="font-medium text-base mt-1">{project.propertyDetails.surfaceArea} m²</div>
-                </div>
-              )}
-              {project.propertyDetails?.parkingSpaces !== undefined && (
-                <div className="rounded-lg border p-3">
-                  <div className="text-xs text-neutral-500">{t("project.parkingSpaces")}</div>
-                  <div className="font-medium text-base mt-1">{project.propertyDetails.parkingSpaces}</div>
-                </div>
-              )}
-              {project.propertyDetails?.floors !== undefined && (
-                <div className="rounded-lg border p-3">
-                  <div className="text-xs text-neutral-500">{t("project.floors")}</div>
-                  <div className="font-medium text-base mt-1">{project.propertyDetails.floors}</div>
                 </div>
               )}
             </div>
@@ -156,15 +216,50 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
-
-  const tabResearch = (
-    <div className="space-y-6">
       <Card>
-        <CardHeader><h3 className="text-lg">{t("project.research.title")}</h3></CardHeader>
-        <CardContent><StudyList items={research} /></CardContent>
+        <CardHeader>
+          <h3 className="text-lg">{t("project.automation.title")}</h3>
+          <p className="text-sm text-neutral-600">{t("project.automation.subtitle")}</p>
+        </CardHeader>
+        <CardContent className="grid gap-3 md:grid-cols-3 text-sm">
+          <div className="rounded-lg border p-3">
+            <div className="text-xs text-neutral-500">{t("project.automation.workflowCount")}</div>
+            <div className="text-lg font-semibold">{projectAutomations.length}</div>
+          </div>
+          <div className="rounded-lg border p-3">
+            <div className="text-xs text-neutral-500">{t("project.automation.agentCount")}</div>
+            <div className="text-lg font-semibold">{assignedAgents.length}</div>
+          </div>
+          <div className="rounded-lg border p-3">
+            <div className="text-xs text-neutral-500">{t("project.automation.contact")}</div>
+            <div className="text-sm text-neutral-700">{assignedAgents[0]?.handoffEmail || "automations@smartpresale.ai"}</div>
+          </div>
+        </CardContent>
       </Card>
+      {(projectCommunities.length > 0 || globalCommunity) && (
+        <Card>
+          <CardHeader>
+            <h3 className="text-lg">{t("project.community.title")}</h3>
+            <p className="text-sm text-neutral-600">{t("project.community.subtitle")}</p>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            {globalCommunity && (
+              <Link href={`/community/${globalCommunity.slug}`} className="text-brand hover:underline">
+                {t("project.community.global")}
+              </Link>
+            )}
+            {projectCommunities.map(community => (
+              <div key={community.id} className="rounded-md border p-3">
+                <div className="font-medium">{community.name}</div>
+                <div className="text-xs text-neutral-500">{t("project.community.members", { count: community.memberCount })}</div>
+                <Link href={`/community/${community.slug}`} className="text-brand hover:underline text-xs">
+                  {t("project.community.join")}
+                </Link>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 
@@ -173,13 +268,20 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
       <Card>
         <CardHeader>
           <h3 className="text-lg">{t("project.documents.title")}</h3>
-          <p className="text-sm text-neutral-600 mt-1">
-            {t("project.documents.description")}
-          </p>
+          <p className="text-sm text-neutral-600 mt-1">{t("project.documents.description")}</p>
         </CardHeader>
         <CardContent>
           <DocumentList documents={documents} />
         </CardContent>
+      </Card>
+    </div>
+  );
+
+  const tabResearch = (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader><h3 className="text-lg">{t("project.research.title")}</h3></CardHeader>
+        <CardContent><StudyList items={research} /></CardContent>
       </Card>
     </div>
   );
@@ -214,12 +316,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
     </div>
   );
 
-  const tabSecondary = round ? (
+  const tabSecondary = project.listingType === "presale" && round ? (
     <SecondaryMarketPanel projectId={project.id} roundId={round.id} currency={project.currency} />
   ) : (
     <Card>
       <CardContent className="py-8 text-center text-neutral-600">
-        {t("project.secondary.noRound")}
+        {project.listingType === "sale" ? t("project.secondary.saleMessage") : t("project.secondary.noRound")}
       </CardContent>
     </Card>
   );
@@ -248,13 +350,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
 
   return (
     <div className="space-y-6">
+      <Script id="project-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <FinancialHeader
         name={project.name}
         ticker={project.ticker}
+        listingType={project.listingType}
+        stage={project.stage || project.developmentStage}
+        availability={availability}
         deadlineAt={round?.deadlineAt}
-        percent={summary?.percent ?? 0}
+        percent={summary?.percent}
+        showProgress={project.listingType === "presale" && !!round}
         kpis={kpis}
-        status={round?.status ?? "open"}
+        status={round?.status}
       />
 
       <Tabs
@@ -268,22 +375,26 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
         ]}
       />
 
-      {round && (
-        <Card>
-          <CardHeader><h3 className="text-lg">{t("project.actions.title")}</h3></CardHeader>
-          <CardContent className="flex items-center justify-between">
-            <div className="text-sm text-neutral-700">
-              {round.groupSlots ? `${t("project.actions.group")}: ${round.groupSlots} slots. ` : ""}
-              {t("project.actions.depositPerSlot")}: {fmtCurrency(round.depositAmount, project.currency, locale)}.
-            </div>
-            <div className="flex items-center gap-2">
+      <Card>
+        <CardHeader><h3 className="text-lg">{t("project.actions.title")}</h3></CardHeader>
+        <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-sm text-neutral-700">
+            {project.listingType === "presale" && round
+              ? `${round.groupSlots ? `${t("project.actions.group")}: ${round.groupSlots} slots. ` : ""}${t("project.actions.depositPerSlot")}: ${fmtCurrency(round.depositAmount, project.currency, locale)}.`
+              : t("project.actions.saleDescription")}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {project.listingType === "presale" && round ? (
               <ReserveDialog project={project} round={round} />
-              <Link href={`/dashboard`} className="text-brand hover:underline text-sm">{t("project.actions.viewMyReservations")}</Link>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            ) : (
+              <Link href={globalCommunity ? `/community/${globalCommunity.slug}` : "/community"} className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:opacity-90">
+                {t("project.actions.contactSales")}
+              </Link>
+            )}
+            <Link href={`/dashboard`} className="text-brand hover:underline text-sm">{t("project.actions.viewMyReservations")}</Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
-

@@ -34,6 +34,7 @@
     "projects": "Projects",
     "myReservations": "My Reservations",
     "devPanel": "Dev Panel",
+    "communities": "Communities",
     "admin": "Admin",
     "howItWorks": "How it works",
     "language": "Language",
@@ -41,14 +42,93 @@
     "english": "English"
   },
   "home": {
-    "title": "Verified Projects",
-    "published": "Published",
-    "progress": "Progress",
-    "deposit": "Deposit",
-    "viewDetail": "View detail →",
-    "noProjects": "No projects available"
+    "seo": {
+      "title": "Smart Presale X · Presale launches and ready-to-close inventory",
+      "description": "Launch verified developments with automation-ready workflows, private communities and AI co-pilots for every buyer journey."
+    },
+    "hero": {
+      "badge": "Intelligent real estate marketing",
+      "title": "Turn presales and inventory into digital experiences",
+      "subtitle": "Segment leads, automate nurturing and share proof inside curated communities.",
+      "ctaPrimary": "Explore projects",
+      "ctaSecondary": "Join the community",
+      "metrics": {
+        "funding": "Funding progress",
+        "stage": "Stage",
+        "deposit": "Deposit"
+      }
+    },
+    "search": {
+      "cityPlaceholder": "City, destination or development",
+      "priceAny": "Any price",
+      "priceLow": "Under 250k",
+      "priceMid": "250k to 500k",
+      "priceHigh": "500k+",
+      "cta": "Search"
+    },
+    "sections": {
+      "presaleHeading": "Active presale campaigns",
+      "presaleSubheading": "Digital contracts, KYC and automated follow up for every reservation.",
+      "saleHeading": "Move-in ready properties",
+      "saleSubheading": "Premium inventory with AI concierge and delivery playbooks.",
+      "communityHeading": "Communities and intelligent support",
+      "communitySubheading": "Activate project forums, construction updates and investor co-creation.",
+      "viewDashboard": "View reservations dashboard",
+      "viewAll": "View full catalog",
+      "noPresale": "No presale campaigns available.",
+      "noSale": "No listings available yet."
+    },
+    "labels": {
+      "presale": "Presale",
+      "sale": "On market",
+      "stage": "Stage",
+      "stageUnknown": "To be confirmed",
+      "deposit": "Deposit",
+      "price": "Price",
+      "propertyType": "Product",
+      "progress": "Progress",
+      "deadline": "Deadline",
+      "openProject": "View detail →",
+      "notApplicable": "N/A"
+    },
+    "community": {
+      "scope": {
+        "global": "Global",
+        "campaign": "Campaign"
+      },
+      "members": "{count, plural, one {# member} other {# members}}",
+      "open": "Enter community"
+    }
+  },
+  "communityPage": {
+    "title": "Smart Presale communities",
+    "subtitle": "Bring buyers, investors and internal teams together with moderated spaces and automations.",
+    "globalTitle": "Global communities",
+    "campaignTitle": "Campaign communities",
+    "emptyGlobal": "No global communities published yet.",
+    "emptyCampaign": "No campaign communities active yet.",
+    "scope": {
+      "global": "Global",
+      "campaign": "Campaign"
+    },
+    "members": "{count, plural, one {# member} other {# members}}",
+    "open": "View community",
+    "detailSubtitle": "Join to receive construction updates, sales enablement content and concierge support.",
+    "tags": "Topics",
+    "featured": "Featured",
+    "related": "Related communities"
   },
   "project": {
+    "labels": {
+      "presale": "Presale",
+      "sale": "On market"
+    },
+    "availability": {
+      "available": "Available",
+      "reserved": "Reserved",
+      "sold": "Sold",
+      "coming_soon": "Coming soon"
+    },
     "propertyInfo": "Property Information",
     "propertyType": "Property Type",
     "propertyCost": "Property Cost",
@@ -91,6 +171,7 @@
     },
     "secondary": {
       "noRound": "This project does not have an active round.",
+      "saleMessage": "This inventory is marketed directly with a dedicated concierge.",
       "sellSlots": "Sell your slots (internal market)",
       "confirmedSlots": "Confirmed slots",
       "slotsToSell": "Slots to sell",
@@ -114,7 +195,23 @@
       "title": "Actions",
       "group": "Group",
       "depositPerSlot": "Deposit per slot",
-      "viewMyReservations": "View my reservations →"
+      "viewMyReservations": "View my reservations →",
+      "saleDescription": "Schedule guided tours, coordinate closings and onboard residents via the private community.",
+      "contactSales": "Contact concierge"
+    },
+    "automation": {
+      "title": "Automation ready",
+      "subtitle": "Connect nurturing, scoring and alerts for your commercial team.",
+      "workflowCount": "Configured flows",
+      "agentCount": "AI agents assigned",
+      "contact": "Ops contact"
+    },
+    "community": {
+      "title": "Community & follow-up",
+      "subtitle": "Private access for buyers and partners.",
+      "global": "View global community",
+      "join": "Enter",
+      "members": "{count, plural, one {# member} other {# members}}"
     },
     "kpis": {
       "totalUnits": "Total units",
@@ -298,18 +395,40 @@
     }
   },
   "admin": {
-    "title": "Administration Panel",
+    "title": "Admin Console",
+    "subtitle": "Coordinate portfolio, automations and communities in one command center.",
+    "tabs": {
+      "projects": "Portfolio",
+      "automations": "Automations",
+      "agents": "AI Agents",
+      "communities": "Communities"
+    },
     "filters": {
       "all": "All statuses",
       "draft": "Drafts",
       "review": "Under review",
       "published": "Published"
     },
+    "listingType": {
+      "presale": "Presale",
+      "sale": "On market"
+    },
     "stats": {
       "totalProjects": "Total projects",
       "draft": "Drafts",
       "review": "Under review",
-      "published": "Published"
+      "published": "Published",
+      "presale": "Presale launches",
+      "sale": "For sale"
+    },
+    "projects": {
+      "subtitle": "Control publishing, rounds and automation readiness for each property.",
+      "automationReady": "Automation ready",
+      "availability": "{status, select, available{Available} reserved{Reserved} sold{Sold} coming_soon{Coming soon} other{Unknown}}",
+      "assignedAgents": "{count, plural, one {# AI agent assigned} other {# AI agents assigned}}",
+      "type": "Type",
+      "stage": "Stage",
+      "deposit": "Deposit"
     },
     "noProjects": "No projects.",
     "noProjectsFiltered": "No projects with status \"{status}\".",
@@ -333,6 +452,76 @@
     "viewProject": "View project →",
     "noRound": "This project does not have an associated round. The developer must create a round.",
     "reservations": "reservations",
+    "automations": {
+      "total": "Configured flows",
+      "active": "Active",
+      "channels": "Connected channels",
+      "createTitle": "Create automation",
+      "createDescription": "Set triggers and channels to orchestrate nurturing or alerts.",
+      "form": {
+        "namePlaceholder": "Internal flow name",
+        "anyProject": "Apply to any project",
+        "descriptionPlaceholder": "Notes, playbook or checklist",
+        "submit": "Save flow"
+      },
+      "triggers": {
+        "new_lead": "New lead",
+        "new_reservation": "New reservation",
+        "milestone": "Campaign milestone",
+        "manual": "Manual / on demand"
+      },
+      "channels_email": "Email",
+      "channels_whatsapp": "WhatsApp",
+      "channels_slack": "Slack",
+      "channels_crm": "CRM",
+      "status": {
+        "draft": "Draft",
+        "active": "Active",
+        "paused": "Paused"
+      },
+      "pause": "Pause",
+      "activate": "Activate",
+      "empty": "No automations yet.",
+      "created": "Automation created",
+      "statusUpdated": "Status updated"
+    },
+    "agents": {
+      "createTitle": "Add intelligent agent",
+      "createDescription": "Train in-house AI agents for sales, concierge or ops.",
+      "form": {
+        "name": "Agent name",
+        "playbook": "Playbook / main pitch",
+        "languages": "Languages (comma separated)",
+        "handoff": "Handoff email (optional)",
+        "submit": "Save agent"
+      },
+      "persona": {
+        "sales": "Consultative sales",
+        "concierge": "Concierge / hospitality",
+        "community": "Community manager",
+        "operations": "Operations / analyst"
+      },
+      "status": {
+        "training": "Training",
+        "ready": "Ready",
+        "paused": "Paused"
+      },
+      "projects": "Assigned projects",
+      "activate": "Activate",
+      "pause": "Pause",
+      "created": "Agent created",
+      "statusUpdated": "Agent status updated",
+      "empty": "No agents configured yet."
+    },
+    "communities": {
+      "empty": "No communities yet.",
+      "members": "{count, plural, one {# member} other {# members}}",
+      "open": "Open community",
+      "scope": {
+        "global": "Global",
+        "campaign": "Campaign"
+      }
+    },
     "messages": {
       "projectPublished": "Project published successfully",
       "projectUpdated": "Project updated to \"{status}\"",
