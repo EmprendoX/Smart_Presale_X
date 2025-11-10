@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/Select";
 import { Link } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { defaultLocale } from "@/i18n/config";
+import type { LinkProps } from "next/link";
 import {
   listPublishedProjects,
   findRoundByProject,
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       type: "website"
     },
     alternates: {
-      canonical: path
+      canonical: `https://smart-presale.example${path}`
     }
   };
 }
@@ -81,7 +82,10 @@ const communityCTA = (
           ))}
         </div>
       ) : null}
-      <Link href={`/community/${community.slug}`} className="inline-flex items-center text-sm font-medium text-brand hover:underline">
+      <Link
+        href={{ pathname: "/community/[slug]", query: { slug: community.slug } }}
+        className="inline-flex items-center text-sm font-medium text-brand hover:underline"
+      >
         {t("community.open")}
       </Link>
     </CardContent>
@@ -92,7 +96,7 @@ const renderProjectCard = (
   data: ProjectWithMetrics,
   locale: string,
   t: (key: string, values?: Record<string, any>) => string,
-  href: string
+  href: LinkProps["href"]
 ) => {
   const { project, round, percent } = data;
   const isPresale = project.listingType === "presale";
@@ -186,8 +190,12 @@ export default async function ProjectsPage({ params }: { params: Params }) {
   const heroProject = projectsWithData.find(p => p.project.featured) ?? projectsWithData[0];
   const globalCommunity = communities.find(c => c.scope === "global");
   const campaignCommunities = communities.filter(c => c.scope === "campaign").slice(0, 3);
-  const heroPrimaryLink = heroProject ? `/p/${heroProject.project.slug}` : "/";
-  const heroSecondaryLink = globalCommunity ? `/community/${globalCommunity.slug}` : "/community";
+  const heroPrimaryLink: LinkProps["href"] = heroProject
+    ? { pathname: "/p/[slug]", query: { slug: heroProject.project.slug } }
+    : { pathname: "/projects" };
+  const heroSecondaryLink: LinkProps["href"] = globalCommunity
+    ? { pathname: "/community/[slug]", query: { slug: globalCommunity.slug } }
+    : { pathname: "/community" };
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -221,10 +229,16 @@ export default async function ProjectsPage({ params }: { params: Params }) {
               <h1 className="text-3xl font-semibold md:text-4xl">{t("hero.title")}</h1>
               <p className="text-sm text-neutral-200 md:text-base">{t("hero.subtitle")}</p>
               <div className="flex flex-wrap gap-3">
-                <Link href={heroPrimaryLink} className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-neutral-900 shadow hover:bg-neutral-100">
+                <Link
+                  href={heroPrimaryLink}
+                  className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-neutral-900 shadow hover:bg-neutral-100"
+                >
                   {t("hero.ctaPrimary")}
                 </Link>
-                <Link href={heroSecondaryLink} className="inline-flex items-center rounded-md border border-white/40 px-4 py-2 text-sm font-medium text-white hover:bg-white/10">
+                <Link
+                  href={heroSecondaryLink}
+                  className="inline-flex items-center rounded-md border border-white/40 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
+                >
                   {t("hero.ctaSecondary")}
                 </Link>
               </div>
@@ -277,13 +291,23 @@ export default async function ProjectsPage({ params }: { params: Params }) {
             <h2 className="text-2xl font-semibold">{t("sections.presaleHeading")}</h2>
             <p className="text-sm text-neutral-600">{t("sections.presaleSubheading")}</p>
           </div>
-          <Link href="/dashboard" className="text-sm font-medium text-brand hover:underline">{t("sections.viewDashboard")}</Link>
+          <Link
+            href={{ pathname: "/dashboard" }}
+            className="text-sm font-medium text-brand hover:underline"
+          >
+            {t("sections.viewDashboard")}
+          </Link>
         </div>
         {presaleProjects.length === 0 ? (
           <Card><CardContent className="py-8 text-center text-neutral-600">{t("sections.noPresale")}</CardContent></Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {presaleProjects.map(item => renderProjectCard(item, locale, t, `/p/${item.project.slug}`))}
+            {presaleProjects.map(item =>
+              renderProjectCard(item, locale, t, {
+                pathname: "/p/[slug]",
+                query: { slug: item.project.slug }
+              })
+            )}
           </div>
         )}
       </section>
@@ -295,13 +319,23 @@ export default async function ProjectsPage({ params }: { params: Params }) {
             <h2 className="text-2xl font-semibold">{t("sections.saleHeading")}</h2>
             <p className="text-sm text-neutral-600">{t("sections.saleSubheading")}</p>
           </div>
-          <Link href="/community" className="text-sm font-medium text-brand hover:underline">{t("sections.viewAll")}</Link>
+          <Link
+            href={{ pathname: "/community" }}
+            className="text-sm font-medium text-brand hover:underline"
+          >
+            {t("sections.viewAll")}
+          </Link>
         </div>
         {saleProjects.length === 0 ? (
           <Card><CardContent className="py-8 text-center text-neutral-600">{t("sections.noSale")}</CardContent></Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {saleProjects.map(item => renderProjectCard(item, locale, t, `/p/${item.project.slug}`))}
+            {saleProjects.map(item =>
+              renderProjectCard(item, locale, t, {
+                pathname: "/p/[slug]",
+                query: { slug: item.project.slug }
+              })
+            )}
           </div>
         )}
       </section>

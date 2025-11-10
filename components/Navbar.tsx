@@ -107,15 +107,15 @@ export function Navbar() {
     <header className="border-b">
       <div className="container flex items-center justify-between py-3">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-xl font-semibold">
+          <Link href={{ pathname: "/" }} className="text-xl font-semibold">
             Smart <span className="text-brand">Pre‑Sale</span>
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">
-            <Link href="/projects" className="hover:underline">{t("projects")}</Link>
-            <Link href="/dashboard" className="hover:underline">{t("myReservations")}</Link>
-            <Link href="/dev" className="hover:underline">{t("devPanel")}</Link>
-            <Link href="/community" className="hover:underline">{t("communities")}</Link>
-            <Link href="/admin" className="hover:underline">{t("admin")}</Link>
+            <Link href={{ pathname: "/projects" }} className="hover:underline">{t("projects")}</Link>
+            <Link href={{ pathname: "/dashboard" }} className="hover:underline">{t("myReservations")}</Link>
+            <Link href={{ pathname: "/dev" }} className="hover:underline">{t("devPanel")}</Link>
+            <Link href={{ pathname: "/community" }} className="hover:underline">{t("communities")}</Link>
+            <Link href={{ pathname: "/admin" }} className="hover:underline">{t("admin")}</Link>
           </nav>
         </div>
         <div className="flex items-center gap-2">

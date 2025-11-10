@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       type: "website"
     },
     alternates: {
-      canonical: path
+      canonical: `https://smart-presale.example${path}`
     }
   };
 }
@@ -81,7 +81,7 @@ const ListingCard = ({ project, locale, t }: ListingCardProps) => {
           </p>
         ) : null}
         <Link
-          href={`/p/${project.slug}`}
+          href={{ pathname: "/p/[slug]", query: { slug: project.slug } }}
           className="inline-flex text-sm font-medium text-brand hover:underline"
         >
           {t("listing.viewDetail")}
@@ -109,13 +109,13 @@ export default async function HomePage({ params }: { params: Params }) {
           </div>
           <div className="flex flex-wrap gap-4">
             <Link
-              href="/projects#sale"
+              href={{ pathname: "/projects", hash: "sale" }}
               className="inline-flex items-center rounded-md bg-white px-5 py-2 text-sm font-medium text-neutral-900 shadow hover:bg-neutral-100"
             >
               {t("hero.ctaImmediate")}
             </Link>
             <Link
-              href="/projects#presale"
+              href={{ pathname: "/projects", hash: "presale" }}
               className="inline-flex items-center rounded-md border border-white/30 px-5 py-2 text-sm font-medium text-white hover:bg-white/10"
             >
               {t("hero.ctaPresale")}
@@ -134,7 +134,10 @@ export default async function HomePage({ params }: { params: Params }) {
             <CardContent className="space-y-3 p-6">
               <h3 className="text-lg font-semibold text-neutral-900">{t("shortcuts.immediate.title")}</h3>
               <p className="text-sm text-neutral-600">{t("shortcuts.immediate.description")}</p>
-              <Link href="/projects#sale" className="inline-flex text-sm font-medium text-brand hover:underline">
+              <Link
+                href={{ pathname: "/projects", hash: "sale" }}
+                className="inline-flex text-sm font-medium text-brand hover:underline"
+              >
                 {t("shortcuts.immediate.cta")}
               </Link>
             </CardContent>
@@ -143,7 +146,10 @@ export default async function HomePage({ params }: { params: Params }) {
             <CardContent className="space-y-3 p-6">
               <h3 className="text-lg font-semibold text-neutral-900">{t("shortcuts.presale.title")}</h3>
               <p className="text-sm text-neutral-600">{t("shortcuts.presale.description")}</p>
-              <Link href="/projects#presale" className="inline-flex text-sm font-medium text-brand hover:underline">
+              <Link
+                href={{ pathname: "/projects", hash: "presale" }}
+                className="inline-flex text-sm font-medium text-brand hover:underline"
+              >
                 {t("shortcuts.presale.cta")}
               </Link>
             </CardContent>
@@ -210,13 +216,13 @@ export default async function HomePage({ params }: { params: Params }) {
         <h2 className="text-2xl font-semibold text-neutral-900">{t("quickLinks.title")}</h2>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
-            href="/projects#sale"
+            href={{ pathname: "/projects", hash: "sale" }}
             className="inline-flex items-center justify-center rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-900 shadow-sm hover:bg-neutral-50"
           >
             {t("quickLinks.immediate")}
           </Link>
           <Link
-            href="/projects#presale"
+            href={{ pathname: "/projects", hash: "presale" }}
             className="inline-flex items-center justify-center rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-900 shadow-sm hover:bg-neutral-50"
           >
             {t("quickLinks.presale")}
