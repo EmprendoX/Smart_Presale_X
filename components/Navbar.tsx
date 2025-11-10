@@ -114,6 +114,7 @@ export function Navbar() {
             <Link href="/" className="hover:underline">{t("projects")}</Link>
             <Link href="/dashboard" className="hover:underline">{t("myReservations")}</Link>
             <Link href="/dev" className="hover:underline">{t("devPanel")}</Link>
+            <Link href="/community" className="hover:underline">{t("communities")}</Link>
             <Link href="/admin" className="hover:underline">{t("admin")}</Link>
           </nav>
         </div>

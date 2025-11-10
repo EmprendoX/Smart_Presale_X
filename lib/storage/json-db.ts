@@ -1,6 +1,19 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { Project, Round, Reservation, Transaction, ResearchItem, PricePoint, SecondaryListing, Trade, ProjectDocument } from '../types';
+import {
+  Project,
+  Round,
+  Reservation,
+  Transaction,
+  ResearchItem,
+  PricePoint,
+  SecondaryListing,
+  Trade,
+  ProjectDocument,
+  Community,
+  AutomationWorkflow,
+  IntelligentAgent
+} from '../types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 
@@ -394,6 +407,99 @@ export const jsonDb = {
     documents.splice(index, 1);
     await this.saveDocuments(documents);
     return true;
+  },
+
+  // Communities
+  async getCommunities(): Promise<Community[]> {
+    return readJson<Community>('communities.json', []);
+  },
+
+  async saveCommunities(communities: Community[]): Promise<void> {
+    return writeJson('communities.json', communities);
+  },
+
+  async getCommunityBySlug(slug: string): Promise<Community | null> {
+    const communities = await this.getCommunities();
+    return communities.find(c => c.slug === slug) || null;
+  },
+
+  async getCommunitiesByProjectId(projectId: string): Promise<Community[]> {
+    const communities = await this.getCommunities();
+    return communities.filter(c => c.projectId === projectId);
+  },
+
+  async createCommunity(community: Community): Promise<Community> {
+    const communities = await this.getCommunities();
+    communities.push(community);
+    await this.saveCommunities(communities);
+    return community;
+  },
+
+  async updateCommunity(id: string, updates: Partial<Community>): Promise<Community | null> {
+    const communities = await this.getCommunities();
+    const index = communities.findIndex(c => c.id === id);
+    if (index === -1) return null;
+    communities[index] = { ...communities[index], ...updates };
+    await this.saveCommunities(communities);
+    return communities[index];
+  },
+
+  // Automations
+  async getAutomations(): Promise<AutomationWorkflow[]> {
+    return readJson<AutomationWorkflow>('automations.json', []);
+  },
+
+  async saveAutomations(automations: AutomationWorkflow[]): Promise<void> {
+    return writeJson('automations.json', automations);
+  },
+
+  async createAutomation(workflow: AutomationWorkflow): Promise<AutomationWorkflow> {
+    const automations = await this.getAutomations();
+    automations.push(workflow);
+    await this.saveAutomations(automations);
+    return workflow;
+  },
+
+  async updateAutomation(id: string, updates: Partial<AutomationWorkflow>): Promise<AutomationWorkflow | null> {
+    const automations = await this.getAutomations();
+    const index = automations.findIndex(a => a.id === id);
+    if (index === -1) return null;
+    automations[index] = {
+      ...automations[index],
+      ...updates,
+      updatedAt: updates.updatedAt || automations[index].updatedAt
+    };
+    await this.saveAutomations(automations);
+    return automations[index];
+  },
+
+  // Agents
+  async getAgents(): Promise<IntelligentAgent[]> {
+    return readJson<IntelligentAgent>('agents.json', []);
+  },
+
+  async saveAgents(agents: IntelligentAgent[]): Promise<void> {
+    return writeJson('agents.json', agents);
+  },
+
+  async createAgent(agent: IntelligentAgent): Promise<IntelligentAgent> {
+    const agents = await this.getAgents();
+    agents.push(agent);
+    await this.saveAgents(agents);
+    return agent;
+  },
+
+  async updateAgent(id: string, updates: Partial<IntelligentAgent>): Promise<IntelligentAgent | null> {
+    const agents = await this.getAgents();
+    const index = agents.findIndex(a => a.id === id);
+    if (index === -1) return null;
+    agents[index] = {
+      ...agents[index],
+      ...updates,
+      updatedAt: updates.updatedAt || agents[index].updatedAt
+    };
+    await this.saveAgents(agents);
+    return agents[index];
   }
 };
 

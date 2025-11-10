@@ -1,4 +1,17 @@
-import { Project, Round, Reservation, Transaction, ResearchItem, PricePoint, SecondaryListing, Trade, ProjectDocument } from '../types';
+import {
+  Project,
+  Round,
+  Reservation,
+  Transaction,
+  ResearchItem,
+  PricePoint,
+  SecondaryListing,
+  Trade,
+  ProjectDocument,
+  Community,
+  AutomationWorkflow,
+  IntelligentAgent
+} from '../types';
 
 // Interfaz común para todos los servicios de base de datos
 export interface DatabaseService {
@@ -60,6 +73,22 @@ export interface DatabaseService {
   createDocument(document: ProjectDocument): Promise<ProjectDocument>;
   updateDocument(id: string, updates: Partial<ProjectDocument>): Promise<ProjectDocument | null>;
   deleteDocument(id: string): Promise<boolean>;
+
+  // Communities
+  getCommunities(): Promise<Community[]>;
+  getCommunityBySlug(slug: string): Promise<Community | null>;
+  getCommunitiesByProjectId(projectId: string): Promise<Community[]>;
+  createCommunity(community: Community): Promise<Community>;
+  updateCommunity(id: string, updates: Partial<Community>): Promise<Community | null>;
+
+  // Automations & agents
+  getAutomations(): Promise<AutomationWorkflow[]>;
+  createAutomation(workflow: AutomationWorkflow): Promise<AutomationWorkflow>;
+  updateAutomation(id: string, updates: Partial<AutomationWorkflow>): Promise<AutomationWorkflow | null>;
+
+  getAgents(): Promise<IntelligentAgent[]>;
+  createAgent(agent: IntelligentAgent): Promise<IntelligentAgent>;
+  updateAgent(id: string, updates: Partial<IntelligentAgent>): Promise<IntelligentAgent | null>;
 }
 
 

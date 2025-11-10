@@ -1,5 +1,18 @@
 import { DatabaseService } from './db';
-import { Project, Round, Reservation, Transaction, ResearchItem, PricePoint, SecondaryListing, Trade, ProjectDocument } from '../types';
+import {
+  Project,
+  Round,
+  Reservation,
+  Transaction,
+  ResearchItem,
+  PricePoint,
+  SecondaryListing,
+  Trade,
+  ProjectDocument,
+  Community,
+  AutomationWorkflow,
+  IntelligentAgent
+} from '../types';
 import { jsonDb } from '../storage/json-db';
 
 export class JsonDbService implements DatabaseService {
@@ -174,6 +187,53 @@ export class JsonDbService implements DatabaseService {
 
   async deleteDocument(id: string): Promise<boolean> {
     return jsonDb.deleteDocument(id);
+  }
+
+  // Communities
+  async getCommunities(): Promise<Community[]> {
+    return jsonDb.getCommunities();
+  }
+
+  async getCommunityBySlug(slug: string): Promise<Community | null> {
+    return jsonDb.getCommunityBySlug(slug);
+  }
+
+  async getCommunitiesByProjectId(projectId: string): Promise<Community[]> {
+    return jsonDb.getCommunitiesByProjectId(projectId);
+  }
+
+  async createCommunity(community: Community): Promise<Community> {
+    return jsonDb.createCommunity(community);
+  }
+
+  async updateCommunity(id: string, updates: Partial<Community>): Promise<Community | null> {
+    return jsonDb.updateCommunity(id, updates);
+  }
+
+  // Automations
+  async getAutomations(): Promise<AutomationWorkflow[]> {
+    return jsonDb.getAutomations();
+  }
+
+  async createAutomation(workflow: AutomationWorkflow): Promise<AutomationWorkflow> {
+    return jsonDb.createAutomation(workflow);
+  }
+
+  async updateAutomation(id: string, updates: Partial<AutomationWorkflow>): Promise<AutomationWorkflow | null> {
+    return jsonDb.updateAutomation(id, updates);
+  }
+
+  // Agents
+  async getAgents(): Promise<IntelligentAgent[]> {
+    return jsonDb.getAgents();
+  }
+
+  async createAgent(agent: IntelligentAgent): Promise<IntelligentAgent> {
+    return jsonDb.createAgent(agent);
+  }
+
+  async updateAgent(id: string, updates: Partial<IntelligentAgent>): Promise<IntelligentAgent | null> {
+    return jsonDb.updateAgent(id, updates);
   }
 }
 

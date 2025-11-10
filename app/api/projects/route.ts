@@ -12,15 +12,40 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json();
   const {
-    name, city, country, currency, description, developerId, images, videoUrl,
-    ticker, totalUnits, attributes, specs, zone,
-    propertyType, propertyPrice, developmentStage, propertyDetails
+    name,
+    city,
+    country,
+    currency,
+    description,
+    developerId,
+    images,
+    videoUrl,
+    ticker,
+    totalUnits,
+    attributes,
+    specs,
+    zone,
+    propertyType,
+    propertyPrice,
+    developmentStage,
+    propertyDetails,
+    listingType,
+    stage,
+    availabilityStatus,
+    askingPrice,
+    tags,
+    featured,
+    automationReady,
+    agentIds,
+    seo
   } = body || {};
 
   if (!name || !developerId) return NextResponse.json({ ok: false, error: "Faltan campos" }, { status: 400 });
 
   const slug = name.toLowerCase().replace(/[^\w]+/g, "-");
   const generatedTicker = ticker || `SPS:${slug.substring(0, 5).toUpperCase()}`;
+
+  const validListingType = listingType === "sale" ? "sale" : "presale";
 
   const p: Project = {
     id: crypto.randomUUID(),
@@ -40,7 +65,16 @@ export async function POST(req: Request) {
     propertyType: propertyType || undefined,
     propertyPrice: propertyPrice ? Number(propertyPrice) : undefined,
     developmentStage: developmentStage || undefined,
-    propertyDetails: propertyDetails || undefined
+    propertyDetails: propertyDetails || undefined,
+    listingType: validListingType,
+    stage: stage || developmentStage || undefined,
+    availabilityStatus: availabilityStatus || (validListingType === "sale" ? "available" : "coming_soon"),
+    askingPrice: askingPrice ? Number(askingPrice) : undefined,
+    tags: Array.isArray(tags) ? tags : undefined,
+    featured: Boolean(featured),
+    automationReady: automationReady !== undefined ? Boolean(automationReady) : true,
+    agentIds: Array.isArray(agentIds) ? agentIds : undefined,
+    seo: seo || undefined
   };
 
   await db.createProject(p);

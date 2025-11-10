@@ -20,6 +20,18 @@ export type Developer = {
 
 export type ProjectStatus = "draft" | "review" | "published";
 
+export type ListingType = "presale" | "sale";
+
+export type AvailabilityStatus = "available" | "reserved" | "sold" | "coming_soon";
+
+export type ProjectSeo = {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  canonicalUrl?: string;
+  image?: string;
+};
+
 export type Project = {
   id: string;
   slug: string;
@@ -33,6 +45,9 @@ export type Project = {
   description: string;
   developerId: string;
   createdAt: string;
+  listingType: ListingType;
+  stage?: string;
+  availabilityStatus?: AvailabilityStatus;
   // NUEVO: apariencia de producto financiero / inventario / specs / zona
   ticker?: string;                 // p.ej. "SPS:ARRCF"
   totalUnits?: number;             // total de unidades del desarrollo
@@ -49,6 +64,7 @@ export type Project = {
   propertyType?: string;           // "Departamentos", "Casas", "Lotes", "Villa", etc.
   propertyPrice?: number;          // costo por unidad/propiedad
   developmentStage?: string;       // "Preventa", "Construcción", "Entrega", etc.
+  askingPrice?: number;            // precio listado (para venta directa)
   // Detalles de la propiedad
   propertyDetails?: {
     bedrooms?: number;             // Número de recámaras
@@ -58,6 +74,11 @@ export type Project = {
     parkingSpaces?: number;        // Número de estacionamientos
     floors?: number;               // Número de niveles/pisos
   };
+  seo?: ProjectSeo;                // Metadatos para SEO
+  tags?: string[];                 // etiquetas para filtros/búsqueda
+  featured?: boolean;              // destacar en home
+  automationReady?: boolean;       // bandera para integraciones
+  agentIds?: string[];             // agentes inteligentes asignados
 };
 
 export type GoalType = "reservations" | "amount";
@@ -149,6 +170,63 @@ export type ResearchItem = {
   source?: string;
   url?: string;
   publishedAt?: string;
+};
+
+export type CommunityScope = "global" | "campaign";
+
+export type CommunityPost = {
+  id: string;
+  title: string;
+  excerpt?: string;
+  author?: string;
+  publishedAt?: string;
+};
+
+export type Community = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  scope: CommunityScope;
+  projectId?: string;
+  roundId?: string;
+  coverImage?: string;
+  tags?: string[];
+  memberCount: number;
+  featuredPosts?: CommunityPost[];
+};
+
+export type AutomationTrigger = "new_lead" | "new_reservation" | "milestone" | "manual";
+
+export type AutomationChannel = "email" | "whatsapp" | "slack" | "crm";
+
+export type AutomationWorkflow = {
+  id: string;
+  name: string;
+  description?: string;
+  status: "draft" | "active" | "paused";
+  trigger: AutomationTrigger;
+  channel: AutomationChannel;
+  projectId?: string;
+  agentId?: string;
+  createdAt: string;
+  updatedAt: string;
+  metadata?: Record<string, any>;
+};
+
+export type AgentPersona = "sales" | "concierge" | "community" | "operations";
+
+export type IntelligentAgent = {
+  id: string;
+  name: string;
+  persona: AgentPersona;
+  status: "training" | "ready" | "paused";
+  playbook: string;
+  handoffEmail?: string;
+  languages: string[];
+  projectIds?: string[];
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type SecondaryListingStatus = "active" | "sold" | "cancelled";

@@ -34,6 +34,7 @@
     "projects": "Proyectos",
     "myReservations": "Mis reservas",
     "devPanel": "Panel Dev",
+    "communities": "Comunidades",
     "admin": "Admin",
     "howItWorks": "Cómo funciona",
     "language": "Idioma",
@@ -41,14 +42,93 @@
     "english": "English"
   },
   "home": {
-    "title": "Proyectos verificados",
-    "published": "Publicado",
-    "progress": "Progreso",
-    "deposit": "Depósito",
-    "viewDetail": "Ver detalle →",
-    "noProjects": "No hay proyectos disponibles"
+    "seo": {
+      "title": "Smart Presale X · Preventas y propiedades listas para escriturar",
+      "description": "Descubre desarrollos verificados con automatizaciones listas, comunidades privadas y agentes IA para acompañar a tus compradores."
+    },
+    "hero": {
+      "badge": "Marketing inmobiliario inteligente",
+      "title": "Convierte preventas y stock en experiencias digitales",
+      "subtitle": "Segmenta leads, activa automatizaciones omnicanal y comparte evidencia en comunidades privadas.",
+      "ctaPrimary": "Explorar proyectos",
+      "ctaSecondary": "Unirme a la comunidad",
+      "metrics": {
+        "funding": "Avance de fondeo",
+        "stage": "Etapa",
+        "deposit": "Depósito"
+      }
+    },
+    "search": {
+      "cityPlaceholder": "Ciudad, destino o desarrollo",
+      "priceAny": "Cualquier precio",
+      "priceLow": "Menos de 250k",
+      "priceMid": "Entre 250k y 500k",
+      "priceHigh": "Más de 500k",
+      "cta": "Buscar"
+    },
+    "sections": {
+      "presaleHeading": "Campañas de preventa activas",
+      "presaleSubheading": "Reservas con contratos digitales, KYC y seguimiento automatizado.",
+      "saleHeading": "Propiedades listas para escriturar",
+      "saleSubheading": "Inventario premium con concierge IA y protocolos de entrega.",
+      "communityHeading": "Comunidades y acompañamiento inteligente",
+      "communitySubheading": "Activa foros por proyecto, seguimiento de obra y co-creación con inversionistas.",
+      "viewDashboard": "Ver panel de reservas",
+      "viewAll": "Ver catálogo completo",
+      "noPresale": "No hay campañas de preventa publicadas.",
+      "noSale": "No hay propiedades en venta disponibles."
+    },
+    "labels": {
+      "presale": "Preventa",
+      "sale": "Venta directa",
+      "stage": "Etapa",
+      "stageUnknown": "Por confirmar",
+      "deposit": "Depósito",
+      "price": "Precio",
+      "propertyType": "Tipología",
+      "progress": "Progreso",
+      "deadline": "Fecha límite",
+      "openProject": "Ver detalle →",
+      "notApplicable": "N/A"
+    },
+    "community": {
+      "scope": {
+        "global": "Global",
+        "campaign": "Campaña"
+      },
+      "members": "{count, plural, one {# miembro} other {# miembros}}",
+      "open": "Entrar a la comunidad"
+    }
+  },
+  "communityPage": {
+    "title": "Comunidades Smart Presale",
+    "subtitle": "Coordina a compradores, inversionistas y equipos internos con espacios moderados y automatizaciones.",
+    "globalTitle": "Comunidades globales",
+    "campaignTitle": "Comunidades por campaña",
+    "emptyGlobal": "Aún no hay comunidades globales publicadas.",
+    "emptyCampaign": "Todavía no hay comunidades activas por campaña.",
+    "scope": {
+      "global": "Global",
+      "campaign": "Campaña"
+    },
+    "members": "{count, plural, one {# miembro} other {# miembros}}",
+    "open": "Ver comunidad",
+    "detailSubtitle": "Súmate para recibir avances de obra, materiales comerciales y soporte dedicado.",
+    "tags": "Temas",
+    "featured": "Destacado",
+    "related": "Otras comunidades"
   },
   "project": {
+    "labels": {
+      "presale": "Preventa",
+      "sale": "Venta directa"
+    },
+    "availability": {
+      "available": "Disponible",
+      "reserved": "Reservado",
+      "sold": "Vendido",
+      "coming_soon": "Próximamente"
+    },
     "propertyInfo": "Información de la propiedad",
     "propertyType": "Tipo de propiedad",
     "propertyCost": "Costo de la propiedad",
@@ -91,6 +171,7 @@
     },
     "secondary": {
       "noRound": "Este proyecto no tiene una ronda activa.",
+      "saleMessage": "Este inventario se comercializa en mercado primario con concierge dedicado.",
       "sellSlots": "Vende tus slots (mercado interno)",
       "confirmedSlots": "Slots confirmados",
       "slotsToSell": "Slots a vender",
@@ -114,7 +195,23 @@
       "title": "Acciones",
       "group": "Grupo",
       "depositPerSlot": "Depósito por slot",
-      "viewMyReservations": "Ver mis reservas →"
+      "viewMyReservations": "Ver mis reservas →",
+      "saleDescription": "Agenda visitas guiadas, coordinación de cierres y onboarding de residentes desde la comunidad privada.",
+      "contactSales": "Contactar concierge"
+    },
+    "automation": {
+      "title": "Automatizaciones listas",
+      "subtitle": "Conecta nurturing, scoring y alertas para tu equipo comercial.",
+      "workflowCount": "Flujos configurados",
+      "agentCount": "Agentes IA asignados",
+      "contact": "Contacto operaciones"
+    },
+    "community": {
+      "title": "Comunidad y seguimiento",
+      "subtitle": "Acceso exclusivo para compradores y aliados.",
+      "global": "Ver comunidad global",
+      "join": "Entrar",
+      "members": "{count, plural, one {# miembro} other {# miembros}}"
     },
     "kpis": {
       "totalUnits": "Unidades totales",
@@ -299,17 +396,39 @@
   },
   "admin": {
     "title": "Panel de Administración",
+    "subtitle": "Orquesta inventario, automatizaciones y comunidades desde un solo lugar.",
+    "tabs": {
+      "projects": "Portafolio",
+      "automations": "Automatizaciones",
+      "agents": "Agentes IA",
+      "communities": "Comunidades"
+    },
     "filters": {
       "all": "Todos los estados",
       "draft": "Borradores",
       "review": "En revisión",
       "published": "Publicados"
     },
+    "listingType": {
+      "presale": "Preventa",
+      "sale": "Venta directa"
+    },
     "stats": {
       "totalProjects": "Total proyectos",
       "draft": "Borradores",
       "review": "En revisión",
-      "published": "Publicados"
+      "published": "Publicados",
+      "presale": "Proyectos preventa",
+      "sale": "En venta"
+    },
+    "projects": {
+      "subtitle": "Administra estados, rondas y alista tus campañas para automatización.",
+      "automationReady": "Listo para automatizaciones",
+      "availability": "{status, select, available{Disponible} reserved{Reservado} sold{Vendido} coming_soon{Próximamente} other{Estado desconocido}}",
+      "assignedAgents": "{count, plural, one {# agente IA asignado} other {# agentes IA asignados}}",
+      "type": "Tipo",
+      "stage": "Etapa",
+      "deposit": "Depósito"
     },
     "noProjects": "No hay proyectos.",
     "noProjectsFiltered": "No hay proyectos con estado \"{status}\".",
@@ -333,6 +452,76 @@
     "viewProject": "Ver proyecto →",
     "noRound": "Este proyecto no tiene una ronda asociada. El desarrollador debe crear una ronda.",
     "reservations": "reservas",
+    "automations": {
+      "total": "Flujos configurados",
+      "active": "Activos",
+      "channels": "Canales conectados",
+      "createTitle": "Configurar automatización",
+      "createDescription": "Define disparadores y canales para activar secuencias de nurturing o alertas.",
+      "form": {
+        "namePlaceholder": "Nombre interno del flujo",
+        "anyProject": "Aplicar a cualquier proyecto",
+        "descriptionPlaceholder": "Notas del flujo, playbook o checklist",
+        "submit": "Guardar flujo"
+      },
+      "triggers": {
+        "new_lead": "Nuevo lead",
+        "new_reservation": "Nueva reserva",
+        "milestone": "Hito de campaña",
+        "manual": "Manual / bajo demanda"
+      },
+      "channels_email": "Email",
+      "channels_whatsapp": "WhatsApp",
+      "channels_slack": "Slack",
+      "channels_crm": "CRM",
+      "status": {
+        "draft": "Borrador",
+        "active": "Activo",
+        "paused": "Pausado"
+      },
+      "pause": "Pausar",
+      "activate": "Activar",
+      "empty": "Aún no hay automatizaciones configuradas.",
+      "created": "Automatización creada",
+      "statusUpdated": "Estado actualizado"
+    },
+    "agents": {
+      "createTitle": "Agregar agente inteligente",
+      "createDescription": "Entrena agentes IA internos para ventas, concierge o analítica.",
+      "form": {
+        "name": "Nombre del agente",
+        "playbook": "Playbook / pitch principal",
+        "languages": "Idiomas (separados por coma)",
+        "handoff": "Correo de handoff (opcional)",
+        "submit": "Guardar agente"
+      },
+      "persona": {
+        "sales": "Ventas consultivas",
+        "concierge": "Concierge / hospitality",
+        "community": "Community manager",
+        "operations": "Operaciones / analista"
+      },
+      "status": {
+        "training": "Entrenando",
+        "ready": "Activo",
+        "paused": "Pausado"
+      },
+      "projects": "Proyectos asignados",
+      "activate": "Activar",
+      "pause": "Pausar",
+      "created": "Agente creado",
+      "statusUpdated": "Estado de agente actualizado",
+      "empty": "Aún no hay agentes configurados."
+    },
+    "communities": {
+      "empty": "Aún no hay comunidades creadas.",
+      "members": "{count, plural, one {# miembro} other {# miembros}}",
+      "open": "Abrir comunidad",
+      "scope": {
+        "global": "Global",
+        "campaign": "Campaña"
+      }
+    },
     "messages": {
       "projectPublished": "Proyecto publicado exitosamente",
       "projectUpdated": "Proyecto actualizado a \"{status}\"",

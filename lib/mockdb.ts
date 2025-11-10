@@ -1,4 +1,19 @@
-import { Currency, Developer, Project, ProjectDocument, Reservation, Round, Transaction, User, ResearchItem, PricePoint } from "./types";
+import {
+  Currency,
+  Developer,
+  Project,
+  ProjectDocument,
+  Reservation,
+  Round,
+  Transaction,
+  User,
+  ResearchItem,
+  PricePoint,
+  AutomationWorkflow,
+  IntelligentAgent,
+  Community,
+  ListingType
+} from "./types";
 import { db } from "./config";
 
 // Usuarios y desarrolladores (solo para demo, no se persisten aún)
@@ -34,6 +49,9 @@ const initializeDefaultData = async () => {
         country: "MX",
         currency: "USD",
         status: "published",
+        listingType: "presale",
+        stage: "Preventa",
+        availabilityStatus: "available",
         images: [
           "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1600&auto=format&fit=crop",
           "https://images.unsplash.com/photo-1505691723518-36a9f3a59c07?q=80&w=1600&auto=format&fit=crop",
@@ -57,7 +75,22 @@ const initializeDefaultData = async () => {
           schools: ["Colegio Internacional Cancún"],
           transport: ["Aeropuerto CUN a 20 min", "Conectividad Blvd. Kukulcán"],
           retail: ["La Isla Shopping Village", "Luxury Avenue"]
-        }
+        },
+        propertyType: "Departamentos de lujo",
+        propertyPrice: 480000,
+        developmentStage: "Estructura",
+        askingPrice: 495000,
+        propertyDetails: {
+          bedrooms: 3,
+          bathrooms: 2,
+          halfBathrooms: 1,
+          surfaceArea: 145,
+          parkingSpaces: 2
+        },
+        tags: ["playa", "vacacional", "lujo"],
+        featured: true,
+        automationReady: true,
+        agentIds: ["agent-concierge", "agent-analyst"]
       },
       {
         id: "p2",
@@ -67,6 +100,9 @@ const initializeDefaultData = async () => {
         country: "MX",
         currency: "MXN",
         status: "published",
+        listingType: "presale",
+        stage: "Pre-lanzamiento",
+        availabilityStatus: "available",
         images: [
           "https://images.unsplash.com/photo-1560448075-bb4caa6c9319?q=80&w=1600&auto=format&fit=crop",
           "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1600&auto=format&fit=crop"
@@ -88,7 +124,71 @@ const initializeDefaultData = async () => {
           schools: ["Tec de Monterrey Campus Santa Fe (cercano)"],
           transport: ["Metrobus / Metro / Vías primarias"],
           retail: ["Antara", "Miyana", "Plaza Carso"]
-        }
+        },
+        propertyType: "Lofts urbanos",
+        propertyPrice: 2700000,
+        developmentStage: "Fase de planos",
+        askingPrice: 2850000,
+        propertyDetails: {
+          bedrooms: 1,
+          bathrooms: 1,
+          surfaceArea: 48,
+          parkingSpaces: 1
+        },
+        tags: ["ciudad", "inversión", "renta"],
+        featured: true,
+        automationReady: true,
+        agentIds: ["agent-analyst"]
+      },
+      {
+        id: "p3",
+        slug: "villa-aurora",
+        name: "Villa Aurora",
+        city: "Mérida",
+        country: "MX",
+        currency: "USD",
+        status: "published",
+        listingType: "sale",
+        stage: "Entrega inmediata",
+        availabilityStatus: "available",
+        images: [
+          "https://images.unsplash.com/photo-1600585154340-0ef3c08dcdb6?q=80&w=1600&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1616594039964-78c8f7cf5c4f?q=80&w=1600&auto=format&fit=crop"
+        ],
+        description: "Residencia contemporánea en privada con seguridad y amenidades resort.",
+        developerId: "d1",
+        createdAt: nowISO(),
+        ticker: "SPS:AURRA",
+        totalUnits: 12,
+        attributes: ["Casa club", "Circuito de jogging", "Paneles solares", "Wellness spa"],
+        specs: {
+          "Entrega": "Disponible",
+          "Superficie": "320 m²",
+          "Régimen": "Propiedad privada"
+        },
+        zone: {
+          summary: "Zona norte de Mérida con plusvalía creciente y oferta gastronómica.",
+          golf: ["La Ceiba"],
+          schools: ["Colegio Peninsular"],
+          transport: ["Aeropuerto MID a 25 min", "Periférico cercano"],
+          retail: ["The Harbor", "La Isla Mérida"]
+        },
+        propertyType: "Residencias premium",
+        propertyPrice: 720000,
+        askingPrice: 695000,
+        developmentStage: "Llave en mano",
+        propertyDetails: {
+          bedrooms: 4,
+          bathrooms: 4,
+          halfBathrooms: 1,
+          surfaceArea: 320,
+          parkingSpaces: 3,
+          floors: 2
+        },
+        tags: ["premium", "residencial", "merida"],
+        featured: true,
+        automationReady: true,
+        agentIds: ["agent-concierge", "agent-broker"]
       }
     ];
 
@@ -190,6 +290,171 @@ const initializeDefaultData = async () => {
         await db.addPricePoint(projectId, point);
       }
     }
+
+    // Agentes inteligentes
+    const defaultAgents: IntelligentAgent[] = [
+      {
+        id: "agent-concierge",
+        name: "Luna Concierge IA",
+        persona: "concierge",
+        status: "ready",
+        playbook: "Atiende leads interesados en experiencias frente al mar y coordina visitas virtuales.",
+        handoffEmail: "concierge@smartpresale.ai",
+        languages: ["es", "en"],
+        projectIds: ["p1", "p3"],
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      },
+      {
+        id: "agent-analyst",
+        name: "Atlas Analyst",
+        persona: "operations",
+        status: "ready",
+        playbook: "Provee análisis financiero, seguimiento de KPIs y alertas sobre progreso de rondas.",
+        handoffEmail: "ops@smartpresale.ai",
+        languages: ["es"],
+        projectIds: ["p1", "p2"],
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      },
+      {
+        id: "agent-broker",
+        name: "Rhea Broker",
+        persona: "sales",
+        status: "training",
+        playbook: "Nutre leads de inventario listo para entrega y coordina negociaciones.",
+        handoffEmail: "broker@smartpresale.ai",
+        languages: ["es", "en"],
+        projectIds: ["p3"],
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      }
+    ];
+
+    if ((await db.getAgents()).length === 0) {
+      for (const agent of defaultAgents) {
+        await db.createAgent(agent);
+      }
+    }
+
+    // Automatizaciones preconfiguradas
+    const defaultAutomations: AutomationWorkflow[] = [
+      {
+        id: "auto-presale-progress",
+        name: "Alerta progreso 75%",
+        description: "Notifica al equipo cuando una preventa supera el 75% y activa comunicación de cierre.",
+        status: "active",
+        trigger: "milestone",
+        channel: "slack",
+        projectId: "p1",
+        agentId: "agent-analyst",
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        metadata: { threshold: 0.75, channel: "#ventas-presale" }
+      },
+      {
+        id: "auto-lead-nurture",
+        name: "Secuencia nurturización LOFT 27",
+        description: "Secuencia automática de 3 correos + WhatsApp para leads de preventa urbana.",
+        status: "paused",
+        trigger: "new_lead",
+        channel: "email",
+        projectId: "p2",
+        agentId: "agent-analyst",
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        metadata: { cadence: "3-7-14", crmTag: "lead_frio" }
+      },
+      {
+        id: "auto-tour-villa",
+        name: "Coordinación de tours Villa Aurora",
+        description: "Agenda automáticamente recorridos presenciales y envía dossier digital.",
+        status: "active",
+        trigger: "new_reservation",
+        channel: "whatsapp",
+        projectId: "p3",
+        agentId: "agent-concierge",
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        metadata: { template: "tour_villa", handoff: "concierge@smartpresale.ai" }
+      }
+    ];
+
+    if ((await db.getAutomations()).length === 0) {
+      for (const workflow of defaultAutomations) {
+        await db.createAutomation(workflow);
+      }
+    }
+
+    // Comunidades
+    const defaultCommunities: Community[] = [
+      {
+        id: "comm-global",
+        slug: "comunidad-smart-presale",
+        name: "Comunidad Global Smart Presale",
+        description: "Espacio para inversionistas y desarrolladores con acceso a masterclasses, lanzamientos y playbooks.",
+        scope: "global",
+        coverImage: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop",
+        tags: ["networking", "educación", "automatización"],
+        memberCount: 428,
+        featuredPosts: [
+          {
+            id: "post-masterclass",
+            title: "Cómo lanzar campañas omnicanal en 14 días",
+            excerpt: "Checklist accionable para automatizar nurturing desde la primera reserva.",
+            author: "Equipo Smart Presale",
+            publishedAt: nowISO()
+          }
+        ]
+      },
+      {
+        id: "comm-p1",
+        slug: "residencial-arrecife-preventa",
+        name: "Residencial Arrecife · Comunidad Preventa",
+        description: "Actualizaciones constructivas, comparables de mercado y coordinación de visitas para compradores.",
+        scope: "campaign",
+        projectId: "p1",
+        roundId: "r1",
+        coverImage: "https://images.unsplash.com/photo-1505843866550-141cc6f3d9d8?q=80&w=1600&auto=format&fit=crop",
+        tags: ["frente al mar", "seguimiento obra"],
+        memberCount: 96,
+        featuredPosts: [
+          {
+            id: "post-amenidades",
+            title: "Nuevo render del rooftop y amenidades",
+            excerpt: "Tour guiado por Luna Concierge con highlights del spa y sky lounge.",
+            author: "Luna Concierge IA",
+            publishedAt: nowISO()
+          }
+        ]
+      },
+      {
+        id: "comm-p3",
+        slug: "villa-aurora-residentes",
+        name: "Villa Aurora · Comunidad Propietarios",
+        description: "Foro privado para residentes y prospectos con acceso a automatizaciones de mantenimiento y concierge.",
+        scope: "campaign",
+        projectId: "p3",
+        memberCount: 54,
+        coverImage: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1600&auto=format&fit=crop",
+        tags: ["villa", "servicios", "concierge"],
+        featuredPosts: [
+          {
+            id: "post-experience",
+            title: "Experiencia de propietario: Sandra & Luis",
+            excerpt: "Testimonio sobre automatización de smart-home y entregas programadas.",
+            author: "Rhea Broker",
+            publishedAt: nowISO()
+          }
+        ]
+      }
+    ];
+
+    if ((await db.getCommunities()).length === 0) {
+      for (const community of defaultCommunities) {
+        await db.createCommunity(community);
+      }
+    }
   }
 };
 
@@ -210,7 +475,10 @@ export const DB = {
   get research() { return db.getResearch(); },
   get priceHistory() { return db.getPriceHistory(); },
   get listings() { return db.getListings(); },
-  get trades() { return db.getTrades(); }
+  get trades() { return db.getTrades(); },
+  get communities() { return db.getCommunities(); },
+  get automations() { return db.getAutomations(); },
+  get agents() { return db.getAgents(); }
 };
 
 // Funciones helper que usan el servicio db (mantienen compatibilidad)
@@ -226,9 +494,13 @@ export const findRoundByProject = async (projectId: string) => {
   return db.getRoundByProjectId(projectId);
 };
 
-export const listPublishedProjects = async () => {
+export const listPublishedProjects = async (filter?: { listingType?: ListingType }) => {
   const projects = await db.getProjects();
-  return projects.filter(p => p.status === "published");
+  return projects.filter(p => {
+    if (p.status !== "published") return false;
+    if (filter?.listingType && p.listingType !== filter.listingType) return false;
+    return true;
+  });
 };
 
 export const byRoundReservations = async (roundId: string) => {
@@ -237,4 +509,24 @@ export const byRoundReservations = async (roundId: string) => {
 
 export const byUserReservations = async (userId: string) => {
   return db.getReservationsByUserId(userId);
+};
+
+export const listCommunities = async () => {
+  return db.getCommunities();
+};
+
+export const listCommunitiesByProject = async (projectId: string) => {
+  return db.getCommunitiesByProjectId(projectId);
+};
+
+export const findCommunityBySlug = async (slug: string) => {
+  return db.getCommunityBySlug(slug);
+};
+
+export const listAutomations = async () => {
+  return db.getAutomations();
+};
+
+export const listAgents = async () => {
+  return db.getAgents();
 };
