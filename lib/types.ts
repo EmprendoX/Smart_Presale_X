@@ -9,7 +9,7 @@ export type User = {
   name: string;
   role: Role;
   kycStatus: KycStatus;
-  tenantId?: string;
+  tenantId: string;
   email?: string;
   metadata?: Record<string, any> | null;
 };
@@ -19,7 +19,7 @@ export type Developer = {
   userId: string;
   company: string;
   verifiedAt?: string | null;
-  tenantId?: string;
+  tenantId: string;
 };
 
 export type ProjectStatus = "draft" | "review" | "published";
@@ -44,7 +44,7 @@ export type Project = {
   country: string;
   currency: Currency;
   status: ProjectStatus;
-  tenantId?: string;
+  tenantId: string;
   images: string[];
   videoUrl?: string;
   description: string;
@@ -99,17 +99,21 @@ export type Tenant = {
   updatedAt: string;
 };
 
-export type TenantBranding = {
+export type TenantSettings = {
   id: string;
   tenantId: string;
   logoUrl?: string | null;
   darkLogoUrl?: string | null;
+  squareLogoUrl?: string | null;
+  faviconUrl?: string | null;
   primaryColor?: string | null;
+  primaryColorForeground?: string | null;
   secondaryColor?: string | null;
   accentColor?: string | null;
   backgroundColor?: string | null;
-  typography?: Record<string, any> | null;
-  buttons?: Record<string, any> | null;
+  surfaceColor?: string | null;
+  foregroundColor?: string | null;
+  fontFamily?: string | null;
   metadata?: Record<string, any> | null;
   createdAt: string;
   updatedAt: string;
@@ -266,6 +270,7 @@ export type Community = {
   name: string;
   description: string;
   scope: CommunityScope;
+  tenantId: string;
   projectId?: string;
   roundId?: string;
   coverImage?: string;

@@ -12,7 +12,7 @@ import type {
   ResearchItem,
   Round,
   SecondaryListing,
-  TenantBranding,
+  TenantSettings,
   Trade,
   Transaction
 } from "@/lib/types";
@@ -70,9 +70,9 @@ async function migrate() {
       await service.createTenant(tenant);
     }
 
-    const branding = await jsonDb.getTenantBrandingByTenantId(tenant.id);
-    if (branding) {
-      await service.upsertTenantBranding(branding as TenantBranding);
+    const settings = await jsonDb.getTenantSettingsByTenantId(tenant.id);
+    if (settings) {
+      await service.upsertTenantSettings(settings as TenantSettings);
     }
   }
 

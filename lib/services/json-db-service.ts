@@ -16,7 +16,7 @@ import {
   Developer,
   Tenant,
   Client,
-  TenantBranding,
+  TenantSettings,
   PaymentWebhook
 } from '../types';
 import { jsonDb } from '../storage/json-db';
@@ -106,12 +106,12 @@ export class JsonDbService implements DatabaseService {
     return jsonDb.updateClient(id, updates);
   }
 
-  async getTenantBrandingByTenantId(tenantId: string): Promise<TenantBranding | null> {
-    return jsonDb.getTenantBrandingByTenantId(tenantId);
+  async getTenantSettingsByTenantId(tenantId: string): Promise<TenantSettings | null> {
+    return jsonDb.getTenantSettingsByTenantId(tenantId);
   }
 
-  async upsertTenantBranding(branding: TenantBranding): Promise<TenantBranding> {
-    return jsonDb.upsertTenantBranding(branding);
+  async upsertTenantSettings(settings: TenantSettings): Promise<TenantSettings> {
+    return jsonDb.upsertTenantSettings(settings);
   }
 
   // Rondas

@@ -14,7 +14,7 @@ import {
   User,
   Developer,
   Tenant,
-  TenantBranding,
+  TenantSettings,
   Client,
   PaymentWebhook
 } from '../types';
@@ -50,8 +50,8 @@ export interface DatabaseService {
   createClient(client: Client): Promise<Client>;
   updateClient(id: string, updates: Partial<Client>): Promise<Client | null>;
 
-  getTenantBrandingByTenantId(tenantId: string): Promise<TenantBranding | null>;
-  upsertTenantBranding(branding: TenantBranding): Promise<TenantBranding>;
+  getTenantSettingsByTenantId(tenantId: string): Promise<TenantSettings | null>;
+  upsertTenantSettings(settings: TenantSettings): Promise<TenantSettings>;
 
   // Rondas
   getRounds(): Promise<Round[]>;
