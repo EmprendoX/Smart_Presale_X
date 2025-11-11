@@ -11,11 +11,46 @@ import {
   ProjectDocument,
   Community,
   AutomationWorkflow,
-  IntelligentAgent
+  IntelligentAgent,
+  User,
+  Developer,
+  Tenant,
+  Client,
+  TenantBranding
 } from '../types';
 import { jsonDb } from '../storage/json-db';
 
 export class JsonDbService implements DatabaseService {
+  // Usuarios
+  async getUsers(): Promise<User[]> {
+    return jsonDb.getUsers();
+  }
+
+  async getUserById(id: string): Promise<User | null> {
+    return jsonDb.getUserById(id);
+  }
+
+  async upsertUser(user: User): Promise<User> {
+    return jsonDb.upsertUser(user);
+  }
+
+  // Desarrolladores
+  async getDevelopers(): Promise<Developer[]> {
+    return jsonDb.getDevelopers();
+  }
+
+  async getDeveloperById(id: string): Promise<Developer | null> {
+    return jsonDb.getDeveloperById(id);
+  }
+
+  async createDeveloper(developer: Developer): Promise<Developer> {
+    return jsonDb.createDeveloper(developer);
+  }
+
+  async updateDeveloper(id: string, updates: Partial<Developer>): Promise<Developer | null> {
+    return jsonDb.updateDeveloper(id, updates);
+  }
+
   // Proyectos
   async getProjects(): Promise<Project[]> {
     return jsonDb.getProjects();
@@ -35,6 +70,47 @@ export class JsonDbService implements DatabaseService {
 
   async updateProject(id: string, updates: Partial<Project>): Promise<Project | null> {
     return jsonDb.updateProject(id, updates);
+  }
+
+  // Tenants & clientes
+  async getTenants(): Promise<Tenant[]> {
+    return jsonDb.getTenants();
+  }
+
+  async getTenantById(id: string): Promise<Tenant | null> {
+    return jsonDb.getTenantById(id);
+  }
+
+  async createTenant(tenant: Tenant): Promise<Tenant> {
+    return jsonDb.createTenant(tenant);
+  }
+
+  async updateTenant(id: string, updates: Partial<Tenant>): Promise<Tenant | null> {
+    return jsonDb.updateTenant(id, updates);
+  }
+
+  async getClients(): Promise<Client[]> {
+    return jsonDb.getClients();
+  }
+
+  async getClientsByTenantId(tenantId: string): Promise<Client[]> {
+    return jsonDb.getClientsByTenantId(tenantId);
+  }
+
+  async createClient(client: Client): Promise<Client> {
+    return jsonDb.createClient(client);
+  }
+
+  async updateClient(id: string, updates: Partial<Client>): Promise<Client | null> {
+    return jsonDb.updateClient(id, updates);
+  }
+
+  async getTenantBrandingByTenantId(tenantId: string): Promise<TenantBranding | null> {
+    return jsonDb.getTenantBrandingByTenantId(tenantId);
+  }
+
+  async upsertTenantBranding(branding: TenantBranding): Promise<TenantBranding> {
+    return jsonDb.upsertTenantBranding(branding);
   }
 
   // Rondas

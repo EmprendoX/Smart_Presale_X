@@ -10,17 +10,47 @@ import {
   ProjectDocument,
   Community,
   AutomationWorkflow,
-  IntelligentAgent
+  IntelligentAgent,
+  User,
+  Developer,
+  Tenant,
+  TenantBranding,
+  Client
 } from '../types';
 
 // Interfaz común para todos los servicios de base de datos
 export interface DatabaseService {
+  // Usuarios
+  getUsers(): Promise<User[]>;
+  getUserById(id: string): Promise<User | null>;
+  upsertUser(user: User): Promise<User>;
+
+  // Desarrolladores
+  getDevelopers(): Promise<Developer[]>;
+  getDeveloperById(id: string): Promise<Developer | null>;
+  createDeveloper(developer: Developer): Promise<Developer>;
+  updateDeveloper(id: string, updates: Partial<Developer>): Promise<Developer | null>;
+
   // Proyectos
   getProjects(): Promise<Project[]>;
   getProjectById(id: string): Promise<Project | null>;
   getProjectBySlug(slug: string): Promise<Project | null>;
   createProject(project: Project): Promise<Project>;
   updateProject(id: string, updates: Partial<Project>): Promise<Project | null>;
+
+  // Tenants & clientes
+  getTenants(): Promise<Tenant[]>;
+  getTenantById(id: string): Promise<Tenant | null>;
+  createTenant(tenant: Tenant): Promise<Tenant>;
+  updateTenant(id: string, updates: Partial<Tenant>): Promise<Tenant | null>;
+
+  getClients(): Promise<Client[]>;
+  getClientsByTenantId(tenantId: string): Promise<Client[]>;
+  createClient(client: Client): Promise<Client>;
+  updateClient(id: string, updates: Partial<Client>): Promise<Client | null>;
+
+  getTenantBrandingByTenantId(tenantId: string): Promise<TenantBranding | null>;
+  upsertTenantBranding(branding: TenantBranding): Promise<TenantBranding>;
 
   // Rondas
   getRounds(): Promise<Round[]>;

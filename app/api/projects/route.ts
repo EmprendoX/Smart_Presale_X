@@ -52,6 +52,7 @@ export async function POST(req: Request) {
     slug,
     name, city, country, currency,
     status: "review",
+    tenantId: body?.tenantId || "tenant_default",
     images: images || [],
     videoUrl: videoUrl || undefined,
     description: description ?? "",
