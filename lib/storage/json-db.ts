@@ -17,7 +17,7 @@ import {
   User,
   Developer,
   Tenant,
-  TenantBranding,
+  TenantSettings,
   Client,
   PaymentWebhook
 } from '../types';
@@ -41,18 +41,22 @@ const defaultTenants: Tenant[] = [
   }
 ];
 
-const defaultTenantBranding: TenantBranding[] = [
+const defaultTenantSettings: TenantSettings[] = [
   {
     id: randomUUID(),
     tenantId: DEFAULT_TENANT_ID,
     logoUrl: null,
     darkLogoUrl: null,
+    squareLogoUrl: null,
+    faviconUrl: null,
     primaryColor: '#1e3a8a',
+    primaryColorForeground: '#ffffff',
     secondaryColor: '#10b981',
     accentColor: '#f97316',
     backgroundColor: '#f9fafb',
-    typography: { heading: 'Inter', body: 'Inter' },
-    buttons: { radius: '0.75rem' },
+    surfaceColor: '#ffffff',
+    foregroundColor: '#111827',
+    fontFamily: 'Inter',
     metadata: { default: true },
     createdAt: nowISO(),
     updatedAt: nowISO()
@@ -248,30 +252,36 @@ export const jsonDb = {
     return clients[index];
   },
 
-  // Tenant branding
-  async getTenantBranding(): Promise<TenantBranding[]> {
-    return readJson<TenantBranding>('tenant_branding.json', defaultTenantBranding);
+  // Tenant settings
+  async getTenantSettings(): Promise<TenantSettings[]> {
+    return readJson<TenantSettings>('tenant_settings.json', defaultTenantSettings);
   },
 
-  async saveTenantBranding(branding: TenantBranding[]): Promise<void> {
-    return writeJson('tenant_branding.json', branding);
+  async saveTenantSettings(settings: TenantSettings[]): Promise<void> {
+    return writeJson('tenant_settings.json', settings);
   },
 
-  async getTenantBrandingByTenantId(tenantId: string): Promise<TenantBranding | null> {
-    const branding = await this.getTenantBranding();
-    return branding.find(item => item.tenantId === tenantId) ?? null;
+  async getTenantSettingsByTenantId(tenantId: string): Promise<TenantSettings | null> {
+    const settings = await this.getTenantSettings();
+    return settings.find(item => item.tenantId === tenantId) ?? null;
   },
 
-  async upsertTenantBranding(brandingEntry: TenantBranding): Promise<TenantBranding> {
-    const branding = await this.getTenantBranding();
-    const index = branding.findIndex(item => item.tenantId === brandingEntry.tenantId);
+  async upsertTenantSettings(settingsEntry: TenantSettings): Promise<TenantSettings> {
+    const settings = await this.getTenantSettings();
+    const index = settings.findIndex(item => item.tenantId === settingsEntry.tenantId);
     if (index >= 0) {
-      branding[index] = { ...branding[index], ...brandingEntry };
+      const existing = settings[index];
+      settings[index] = {
+        ...existing,
+        ...settingsEntry,
+        createdAt: existing.createdAt,
+        updatedAt: nowISO()
+      };
     } else {
-      branding.push(brandingEntry);
+      settings.push({ ...settingsEntry, createdAt: nowISO(), updatedAt: nowISO() });
     }
-    await this.saveTenantBranding(branding);
-    return brandingEntry;
+    await this.saveTenantSettings(settings);
+    return settingsEntry;
   },
 
   // Proyectos

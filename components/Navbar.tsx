@@ -6,10 +6,15 @@ import { useEffect, useState } from "react";
 import { Select } from "./ui/Select";
 import { Button } from "./ui/Button";
 import { useAuth } from "@/providers/AuthProvider";
+import { useTenant } from "@/providers/TenantProvider";
 
 export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const { user, loading, signOut } = useAuth();
+  const { tenant, settings } = useTenant();
+
+  const brandName = tenant?.name ?? "Smart Pre-Sale";
+  const brandLogo = settings?.logoUrl ?? settings?.darkLogoUrl ?? settings?.squareLogoUrl ?? null;
   
   // Hooks de next-intl con manejo de errores
   let t: ReturnType<typeof useTranslations>;
@@ -73,8 +78,12 @@ export function Navbar() {
     <header className="border-b">
       <div className="container flex items-center justify-between py-3">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-xl font-semibold">
-            Smart <span className="text-brand">Pre‑Sale</span>
+          <Link href="/" className="flex items-center gap-3 text-xl font-semibold text-brand">
+            {brandLogo ? (
+              <img src={brandLogo} alt={brandName} className="h-8 w-auto" />
+            ) : (
+              <span className="leading-none">{brandName}</span>
+            )}
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">
             <Link href="/" className="hover:underline">{t("projects")}</Link>

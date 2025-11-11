@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { db } from "@/lib/config";
 import { Project } from "@/lib/types";
 
@@ -47,12 +48,14 @@ export async function POST(req: Request) {
 
   const validListingType = listingType === "sale" ? "sale" : "presale";
 
+  const tenantId = extractTenantIdFromCookie();
+
   const p: Project = {
     id: crypto.randomUUID(),
     slug,
     name, city, country, currency,
     status: "review",
-    tenantId: body?.tenantId || "tenant_default",
+    tenantId: body?.tenantId || tenantId || "tenant_default",
     images: images || [],
     videoUrl: videoUrl || undefined,
     description: description ?? "",
@@ -80,5 +83,23 @@ export async function POST(req: Request) {
 
   await db.createProject(p);
   return NextResponse.json({ ok: true, data: p });
+}
+
+function extractTenantIdFromCookie(): string | null {
+  const cookieStore = cookies();
+  const encoded = cookieStore.get("tenant_settings")?.value;
+
+  if (!encoded) {
+    return null;
+  }
+
+  try {
+    const decoded = decodeURIComponent(encoded);
+    const payload = JSON.parse(decoded);
+    return (payload?.tenant?.id as string) ?? null;
+  } catch (error) {
+    console.error("[projects] Failed to parse tenant cookie", error);
+    return null;
+  }
 }
 

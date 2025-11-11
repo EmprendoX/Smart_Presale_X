@@ -16,7 +16,7 @@ import type {
   User,
   Developer,
   Tenant,
-  TenantBranding,
+  TenantSettings,
   Client,
   PaymentWebhook
 } from '../types';
@@ -39,7 +39,7 @@ type TableName =
   | 'developers'
   | 'tenants'
   | 'clients'
-  | 'tenant_branding';
+  | 'tenant_settings';
 
 type SupabaseEnv = {
   url: string;
@@ -66,7 +66,7 @@ function throwSupabaseError(context: string, error: any): never {
   throw new Error(`[Supabase] ${context}: ${message}`);
 }
 
-const DEFAULT_TENANT_ID = 'tenant_default';
+const DEFAULT_TENANT_ID = process.env.DEFAULT_TENANT_ID ?? 'tenant_default';
 
 const parseNumber = (value: any): number | undefined => {
   if (value === null || value === undefined) return undefined;
@@ -131,7 +131,7 @@ const mapProjectFromRow = (row: ProjectRow): Project => ({
   country: row.country,
   currency: row.currency as Project['currency'],
   status: row.status as Project['status'],
-  tenantId: row.tenant_id ?? undefined,
+  tenantId: row.tenant_id ?? DEFAULT_TENANT_ID,
   images: row.images ?? [],
   videoUrl: row.video_url ?? undefined,
   description: row.description,
@@ -166,7 +166,7 @@ const mapProjectToRow = (project: Project): Partial<ProjectRow> =>
     country: project.country,
     currency: project.currency,
     status: project.status,
-    tenant_id: project.tenantId ?? DEFAULT_TENANT_ID,
+    tenant_id: project.tenantId,
     images: project.images,
     video_url: project.videoUrl ?? null,
     description: project.description,
@@ -783,6 +783,7 @@ type CommunityRow = {
   name: string;
   description: string;
   scope: string;
+  tenant_id: string;
   project_id: string | null;
   round_id: string | null;
   cover_image: string | null;
@@ -797,6 +798,7 @@ const mapCommunityFromRow = (row: CommunityRow): Community => ({
   name: row.name,
   description: row.description,
   scope: row.scope as Community['scope'],
+  tenantId: row.tenant_id ?? DEFAULT_TENANT_ID,
   projectId: row.project_id ?? undefined,
   roundId: row.round_id ?? undefined,
   coverImage: row.cover_image ?? undefined,
@@ -811,6 +813,7 @@ const mapCommunityToRow = (community: Community): CommunityRow => ({
   name: community.name,
   description: community.description,
   scope: community.scope,
+  tenant_id: community.tenantId,
   project_id: community.projectId ?? null,
   round_id: community.roundId ?? null,
   cover_image: community.coverImage ?? null,
@@ -832,6 +835,9 @@ const mapCommunityUpdatesToRow = (updates: Partial<Community>): Partial<Communit
   }
   if (Object.prototype.hasOwnProperty.call(updates, 'scope') && updates.scope !== undefined) {
     payload.scope = updates.scope;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'tenantId') && updates.tenantId !== undefined) {
+    payload.tenant_id = updates.tenantId;
   }
   if (Object.prototype.hasOwnProperty.call(updates, 'projectId')) {
     payload.project_id = updates.projectId ?? null;
@@ -1012,14 +1018,14 @@ const mapUserFromRow = (row: UserRow): User => ({
   name: row.name,
   role: row.role as User['role'],
   kycStatus: row.kyc_status as User['kycStatus'],
-  tenantId: row.tenant_id ?? undefined,
+  tenantId: row.tenant_id ?? DEFAULT_TENANT_ID,
   email: row.email ?? undefined,
   metadata: row.metadata ?? null
 });
 
 const mapUserToRow = (user: User): UserRow => ({
   id: user.id,
-  tenant_id: user.tenantId ?? DEFAULT_TENANT_ID,
+  tenant_id: user.tenantId,
   name: user.name,
   role: user.role,
   kyc_status: user.kycStatus,
@@ -1030,7 +1036,7 @@ const mapUserToRow = (user: User): UserRow => ({
 
 const mapUserUpdatesToRow = (user: User): Partial<UserRow> =>
   cleanRecord({
-    tenant_id: user.tenantId ?? DEFAULT_TENANT_ID,
+    tenant_id: user.tenantId,
     name: user.name,
     role: user.role,
     kyc_status: user.kycStatus,
@@ -1051,12 +1057,12 @@ const mapDeveloperFromRow = (row: DeveloperRow): Developer => ({
   userId: row.user_id,
   company: row.company,
   verifiedAt: row.verified_at ? parseDate(row.verified_at) ?? null : null,
-  tenantId: row.tenant_id ?? undefined
+  tenantId: row.tenant_id ?? DEFAULT_TENANT_ID
 });
 
 const mapDeveloperToRow = (developer: Developer): DeveloperRow => ({
   id: developer.id,
-  tenant_id: developer.tenantId ?? DEFAULT_TENANT_ID,
+  tenant_id: developer.tenantId,
   user_id: developer.userId,
   company: developer.company,
   verified_at: developer.verifiedAt ?? null
@@ -1065,7 +1071,7 @@ const mapDeveloperToRow = (developer: Developer): DeveloperRow => ({
 const mapDeveloperUpdatesToRow = (updates: Partial<Developer>): Partial<DeveloperRow> => {
   const payload: Partial<DeveloperRow> = {};
   if (Object.prototype.hasOwnProperty.call(updates, 'tenantId')) {
-    payload.tenant_id = updates.tenantId ?? DEFAULT_TENANT_ID;
+    payload.tenant_id = updates.tenantId;
   }
   if (Object.prototype.hasOwnProperty.call(updates, 'userId') && updates.userId !== undefined) {
     payload.user_id = updates.userId;
@@ -1135,52 +1141,64 @@ const mapTenantUpdatesToRow = (updates: Partial<Tenant>): Partial<TenantRow> => 
   return payload;
 };
 
-type TenantBrandingRow = {
+type TenantSettingsRow = {
   id: string;
   tenant_id: string;
   logo_url: string | null;
   dark_logo_url: string | null;
+  square_logo_url: string | null;
+  favicon_url: string | null;
   primary_color: string | null;
+  primary_color_foreground: string | null;
   secondary_color: string | null;
   accent_color: string | null;
   background_color: string | null;
-  typography: Record<string, any> | null;
-  buttons: Record<string, any> | null;
+  surface_color: string | null;
+  foreground_color: string | null;
+  font_family: string | null;
   metadata: Record<string, any> | null;
   created_at: string;
   updated_at: string;
 };
 
-const mapTenantBrandingFromRow = (row: TenantBrandingRow): TenantBranding => ({
+const mapTenantSettingsFromRow = (row: TenantSettingsRow): TenantSettings => ({
   id: row.id,
   tenantId: row.tenant_id,
   logoUrl: row.logo_url ?? null,
   darkLogoUrl: row.dark_logo_url ?? null,
+  squareLogoUrl: row.square_logo_url ?? null,
+  faviconUrl: row.favicon_url ?? null,
   primaryColor: row.primary_color ?? null,
+  primaryColorForeground: row.primary_color_foreground ?? null,
   secondaryColor: row.secondary_color ?? null,
   accentColor: row.accent_color ?? null,
   backgroundColor: row.background_color ?? null,
-  typography: row.typography ?? null,
-  buttons: row.buttons ?? null,
+  surfaceColor: row.surface_color ?? null,
+  foregroundColor: row.foreground_color ?? null,
+  fontFamily: row.font_family ?? null,
   metadata: row.metadata ?? null,
   createdAt: parseDate(row.created_at) ?? new Date().toISOString(),
   updatedAt: parseDate(row.updated_at) ?? new Date().toISOString()
 });
 
-const mapTenantBrandingToRow = (branding: TenantBranding): TenantBrandingRow => ({
-  id: branding.id,
-  tenant_id: branding.tenantId,
-  logo_url: branding.logoUrl ?? null,
-  dark_logo_url: branding.darkLogoUrl ?? null,
-  primary_color: branding.primaryColor ?? null,
-  secondary_color: branding.secondaryColor ?? null,
-  accent_color: branding.accentColor ?? null,
-  background_color: branding.backgroundColor ?? null,
-  typography: branding.typography ?? null,
-  buttons: branding.buttons ?? null,
-  metadata: branding.metadata ?? null,
-  created_at: branding.createdAt,
-  updated_at: branding.updatedAt
+const mapTenantSettingsToRow = (settings: TenantSettings): TenantSettingsRow => ({
+  id: settings.id,
+  tenant_id: settings.tenantId,
+  logo_url: settings.logoUrl ?? null,
+  dark_logo_url: settings.darkLogoUrl ?? null,
+  square_logo_url: settings.squareLogoUrl ?? null,
+  favicon_url: settings.faviconUrl ?? null,
+  primary_color: settings.primaryColor ?? null,
+  primary_color_foreground: settings.primaryColorForeground ?? null,
+  secondary_color: settings.secondaryColor ?? null,
+  accent_color: settings.accentColor ?? null,
+  background_color: settings.backgroundColor ?? null,
+  surface_color: settings.surfaceColor ?? null,
+  foreground_color: settings.foregroundColor ?? null,
+  font_family: settings.fontFamily ?? null,
+  metadata: settings.metadata ?? null,
+  created_at: settings.createdAt,
+  updated_at: settings.updatedAt
 });
 
 type ClientRow = {
@@ -1523,28 +1541,28 @@ export class SupabaseService implements DatabaseService {
     return this.updateSingle<ClientRow, Client>('clients', id, mapClientUpdatesToRow(updates), mapClientFromRow);
   }
 
-  async getTenantBrandingByTenantId(tenantId: string): Promise<TenantBranding | null> {
-    return this.selectSingle<TenantBrandingRow, TenantBranding>(
-      'tenant_branding',
+  async getTenantSettingsByTenantId(tenantId: string): Promise<TenantSettings | null> {
+    return this.selectSingle<TenantSettingsRow, TenantSettings>(
+      'tenant_settings',
       'tenant_id',
       tenantId,
-      mapTenantBrandingFromRow
+      mapTenantSettingsFromRow
     );
   }
 
-  async upsertTenantBranding(branding: TenantBranding): Promise<TenantBranding> {
-    const payload = mapTenantBrandingToRow(branding);
+  async upsertTenantSettings(settings: TenantSettings): Promise<TenantSettings> {
+    const payload = mapTenantSettingsToRow(settings);
     const { data, error } = await this.client
-      .from('tenant_branding')
+      .from('tenant_settings')
       .upsert(payload, { onConflict: 'tenant_id' })
       .select()
       .single();
 
     if (error) {
-      throwSupabaseError('upsertTenantBranding', error);
+      throwSupabaseError('upsertTenantSettings', error);
     }
 
-    return mapTenantBrandingFromRow(data as TenantBrandingRow);
+    return mapTenantSettingsFromRow(data as TenantSettingsRow);
   }
 
   // ===== Rounds =====

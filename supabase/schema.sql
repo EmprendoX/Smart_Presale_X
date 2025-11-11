@@ -16,26 +16,30 @@ create table if not exists tenants (
   updated_at timestamptz not null default now()
 );
 
-create table if not exists tenant_branding (
+create table if not exists tenant_settings (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references tenants(id) on delete cascade,
   logo_url text,
   dark_logo_url text,
+  square_logo_url text,
+  favicon_url text,
   primary_color text,
+  primary_color_foreground text,
   secondary_color text,
   accent_color text,
   background_color text,
-  typography jsonb default '{}'::jsonb,
-  buttons jsonb default '{}'::jsonb,
+  surface_color text,
+  foreground_color text,
+  font_family text,
   metadata jsonb default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  constraint tenant_branding_unique unique (tenant_id)
+  constraint tenant_settings_unique unique (tenant_id)
 );
 
 create table if not exists app_users (
   id text primary key,
-  tenant_id uuid references tenants(id) on delete set null,
+  tenant_id uuid not null references tenants(id) on delete cascade,
   name text not null,
   role text not null check (role in ('buyer','developer','admin')),
   kyc_status text not null check (kyc_status in ('none','basic','verified')),
@@ -46,7 +50,7 @@ create table if not exists app_users (
 
 create table if not exists developers (
   id text primary key,
-  tenant_id uuid references tenants(id) on delete set null,
+  tenant_id uuid not null references tenants(id) on delete cascade,
   user_id text not null,
   company text not null,
   verified_at timestamptz
@@ -74,7 +78,7 @@ create table if not exists projects (
   country text not null,
   currency text not null check (currency in ('USD','MXN')),
   status text not null check (status in ('draft','review','published')),
-  tenant_id uuid references tenants(id) on delete set null,
+  tenant_id uuid not null references tenants(id) on delete cascade,
   images text[] default '{}',
   video_url text,
   description text not null,
@@ -214,6 +218,7 @@ create table if not exists communities (
   name text not null,
   description text not null,
   scope text not null check (scope in ('global','campaign')),
+  tenant_id uuid not null references tenants(id) on delete cascade,
   project_id uuid references projects(id) on delete cascade,
   round_id uuid references rounds(id) on delete cascade,
   cover_image text,
@@ -252,6 +257,8 @@ create table if not exists automation_workflows (
 
 -- Indexes ----------------------------------------------------------------
 create index if not exists idx_projects_tenant_id on projects(tenant_id);
+create index if not exists idx_app_users_tenant_id on app_users(tenant_id);
+create index if not exists idx_developers_tenant_id on developers(tenant_id);
 create index if not exists idx_projects_developer_id on projects(developer_id);
 create index if not exists idx_rounds_project_id on rounds(project_id);
 create index if not exists idx_reservations_round_id on reservations(round_id);
@@ -262,11 +269,13 @@ create index if not exists idx_price_points_project_id on price_points(project_i
 create index if not exists idx_listings_project_id on secondary_listings(project_id);
 create index if not exists idx_documents_project_id on project_documents(project_id);
 create index if not exists idx_communities_project_id on communities(project_id);
+create index if not exists idx_communities_tenant_id on communities(tenant_id);
+create index if not exists idx_tenant_settings_tenant_id on tenant_settings(tenant_id);
 create index if not exists idx_clients_tenant_id on clients(tenant_id);
 
 -- Row Level Security -----------------------------------------------------
 alter table tenants enable row level security;
-alter table tenant_branding enable row level security;
+alter table tenant_settings enable row level security;
 alter table app_users enable row level security;
 alter table developers enable row level security;
 alter table clients enable row level security;
@@ -285,7 +294,7 @@ alter table intelligent_agents enable row level security;
 
 -- Public read access policies
 create policy if not exists "tenants_select_public" on tenants for select using (true);
-create policy if not exists "tenant_branding_select_public" on tenant_branding for select using (true);
+create policy if not exists "tenant_settings_select_public" on tenant_settings for select using (true);
 create policy if not exists "app_users_self_select" on app_users for select using (auth.uid()::text = id or auth.role() = 'service_role' or auth.role() = 'anon');
 create policy if not exists "developers_select_public" on developers for select using (true);
 create policy if not exists "clients_select_public" on clients for select using (auth.role() = 'service_role' or auth.role() = 'authenticated');
@@ -304,7 +313,7 @@ create policy if not exists "agents_select_public" on intelligent_agents for sel
 
 -- Service-role write access
 create policy if not exists "tenants_modify_service" on tenants for all using (auth.role() = 'service_role');
-create policy if not exists "tenant_branding_modify_service" on tenant_branding for all using (auth.role() = 'service_role');
+create policy if not exists "tenant_settings_modify_service" on tenant_settings for all using (auth.role() = 'service_role');
 create policy if not exists "app_users_modify_service" on app_users for all using (auth.role() = 'service_role');
 create policy if not exists "developers_modify_service" on developers for all using (auth.role() = 'service_role');
 create policy if not exists "clients_modify_service" on clients for all using (auth.role() = 'service_role');
@@ -331,12 +340,50 @@ on conflict (id) do update set
   metadata = excluded.metadata,
   updated_at = now();
 
-insert into tenant_branding (tenant_id, logo_url, dark_logo_url, primary_color, secondary_color, accent_color, background_color, metadata)
-values ('tenant_default', null, null, '#1e3a8a', '#10b981', '#f97316', '#f9fafb', '{"default": true}')
+insert into tenant_settings (
+  tenant_id,
+  logo_url,
+  dark_logo_url,
+  square_logo_url,
+  favicon_url,
+  primary_color,
+  primary_color_foreground,
+  secondary_color,
+  accent_color,
+  background_color,
+  surface_color,
+  foreground_color,
+  font_family,
+  metadata
+)
+values (
+  'tenant_default',
+  null,
+  null,
+  null,
+  null,
+  '#1e3a8a',
+  '#ffffff',
+  '#10b981',
+  '#f97316',
+  '#f9fafb',
+  '#ffffff',
+  '#111827',
+  'Inter',
+  '{"default": true}'
+)
 on conflict (tenant_id) do update set
+  logo_url = excluded.logo_url,
+  dark_logo_url = excluded.dark_logo_url,
+  square_logo_url = excluded.square_logo_url,
+  favicon_url = excluded.favicon_url,
   primary_color = excluded.primary_color,
+  primary_color_foreground = excluded.primary_color_foreground,
   secondary_color = excluded.secondary_color,
   accent_color = excluded.accent_color,
   background_color = excluded.background_color,
+  surface_color = excluded.surface_color,
+  foreground_color = excluded.foreground_color,
+  font_family = excluded.font_family,
   metadata = excluded.metadata,
   updated_at = now();

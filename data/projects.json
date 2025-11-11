@@ -12,7 +12,8 @@
     ],
     "description": "Torre residencial frente al mar. Entrega estimada 2027.",
     "developerId": "d1",
-    "createdAt": "2025-11-04T18:39:33.966Z"
+    "createdAt": "2025-11-04T18:39:33.966Z",
+    "tenantId": "tenant_default"
   },
   {
     "id": "p2",
@@ -27,7 +28,8 @@
     ],
     "description": "Lofts urbanos en corredor financiero. Entrega 2026.",
     "developerId": "d1",
-    "createdAt": "2025-11-04T18:39:33.966Z"
+    "createdAt": "2025-11-04T18:39:33.966Z",
+    "tenantId": "tenant_default"
   },
   {
     "id": "75958088-7162-43f7-b50f-223111b36717",
@@ -58,7 +60,8 @@
       "retail": [
         "12"
       ]
-    }
+    },
+    "tenantId": "tenant_default"
   },
   {
     "id": "798c031f-13b0-4a81-8af2-abdca051f3fc",
@@ -99,6 +102,7 @@
       "surfaceArea": 180,
       "parkingSpaces": 2,
       "floors": 4
-    }
+    },
+    "tenantId": "tenant_default"
   }
 ]
