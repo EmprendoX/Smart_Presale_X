@@ -167,6 +167,10 @@ export type Reservation = {
   status: ReservationStatus;
   txId?: string;
   createdAt: string;
+  leadSource?: string;
+  campaign?: string | null;
+  journeyStage?: "lead" | "nurturing" | "reserved" | "closed_won" | "closed_lost";
+  lastEngagementAt?: string | null;
 };
 
 export type TransactionProvider = "simulated" | "stripe" | "escrow";
@@ -264,6 +268,31 @@ export type CommunityPost = {
   publishedAt?: string;
 };
 
+export type CommunityThreadStatus = "pending" | "approved" | "flagged";
+
+export type CommunityThread = {
+  id: string;
+  title: string;
+  author: string;
+  replies: number;
+  lastActivityAt: string;
+  status: CommunityThreadStatus;
+  tags?: string[];
+};
+
+export type CommunityBadge = {
+  id: string;
+  label: string;
+  description?: string;
+  criteria: string;
+};
+
+export type CommunityNotificationChannel = {
+  channel: "push" | "email" | "slack";
+  enabled: boolean;
+  lastTriggeredAt?: string | null;
+};
+
 export type Community = {
   id: string;
   slug: string;
@@ -277,6 +306,11 @@ export type Community = {
   tags?: string[];
   memberCount: number;
   featuredPosts?: CommunityPost[];
+  moderators?: string[];
+  threads?: CommunityThread[];
+  badges?: CommunityBadge[];
+  notificationChannels?: CommunityNotificationChannel[];
+  pushTopic?: string;
 };
 
 export type AutomationTrigger = "new_lead" | "new_reservation" | "milestone" | "manual";

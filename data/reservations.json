@@ -6,7 +6,11 @@
     "slots": 1,
     "amount": 500,
     "status": "pending",
-    "createdAt": "2025-11-04T18:46:13.389Z"
+    "createdAt": "2025-11-04T18:46:13.389Z",
+    "leadSource": "Paid Ads",
+    "campaign": "Arrecife Launch",
+    "journeyStage": "lead",
+    "lastEngagementAt": "2025-11-04T18:50:00.000Z"
   },
   {
     "id": "a75e5141-4991-4142-bffb-10f31a3b0d48",
@@ -15,7 +19,11 @@
     "slots": 1,
     "amount": 500,
     "status": "pending",
-    "createdAt": "2025-11-04T18:59:54.273Z"
+    "createdAt": "2025-11-04T18:59:54.273Z",
+    "leadSource": "Referral",
+    "campaign": "Arrecife Launch",
+    "journeyStage": "nurturing",
+    "lastEngagementAt": "2025-11-05T10:05:00.000Z"
   },
   {
     "id": "9fc90842-b89f-480d-ad9b-42d78c9b3bc4",
@@ -24,7 +32,11 @@
     "slots": 1,
     "amount": 25000,
     "status": "pending",
-    "createdAt": "2025-11-04T19:04:16.457Z"
+    "createdAt": "2025-11-04T19:04:16.457Z",
+    "leadSource": "Organic",
+    "campaign": "Loft 27 Early Access",
+    "journeyStage": "lead",
+    "lastEngagementAt": "2025-11-05T12:00:00.000Z"
   },
   {
     "id": "1fd5695e-30fe-4fee-9661-eab0574359f7",
@@ -33,7 +45,11 @@
     "slots": 1,
     "amount": 25000,
     "status": "confirmed",
-    "createdAt": "2025-11-04T19:04:34.666Z"
+    "createdAt": "2025-11-04T19:04:34.666Z",
+    "leadSource": "Organic",
+    "campaign": "Loft 27 Early Access",
+    "journeyStage": "closed_won",
+    "lastEngagementAt": "2025-11-06T09:20:00.000Z"
   },
   {
     "id": "331650c5-0f56-4927-ae4f-34ade3ada428",
@@ -42,7 +58,11 @@
     "slots": 1,
     "amount": 500,
     "status": "confirmed",
-    "createdAt": "2025-11-06T19:31:57.145Z"
+    "createdAt": "2025-11-06T19:31:57.145Z",
+    "leadSource": "Paid Ads",
+    "campaign": "Arrecife Launch",
+    "journeyStage": "closed_won",
+    "lastEngagementAt": "2025-11-07T11:15:00.000Z"
   },
   {
     "id": "0c4a404e-d31b-4cae-9c06-3cef11250214",
@@ -51,7 +71,11 @@
     "slots": 1,
     "amount": 500,
     "status": "confirmed",
-    "createdAt": "2025-11-06T20:24:31.063Z"
+    "createdAt": "2025-11-06T20:24:31.063Z",
+    "leadSource": "Community",
+    "campaign": "Arrecife VIP",
+    "journeyStage": "reserved",
+    "lastEngagementAt": "2025-11-07T15:42:00.000Z"
   },
   {
     "id": "4b5d9e18-ef9a-4f7e-a048-329552c2600a",
@@ -60,7 +84,11 @@
     "slots": 1,
     "amount": 500,
     "status": "refunded",
-    "createdAt": "2025-11-09T15:24:19.076Z"
+    "createdAt": "2025-11-09T15:24:19.076Z",
+    "leadSource": "Paid Ads",
+    "campaign": "Villa Aurora Tours",
+    "journeyStage": "closed_lost",
+    "lastEngagementAt": "2025-11-10T09:00:00.000Z"
   },
   {
     "id": "c612ffe3-deee-4796-9bc9-b43d01135115",
@@ -69,6 +97,10 @@
     "slots": 1,
     "amount": 500,
     "status": "confirmed",
-    "createdAt": "2025-11-09T15:25:31.492Z"
+    "createdAt": "2025-11-09T15:25:31.492Z",
+    "leadSource": "Community",
+    "campaign": "Villa Aurora Tours",
+    "journeyStage": "closed_won",
+    "lastEngagementAt": "2025-11-10T12:30:00.000Z"
   }
 ]

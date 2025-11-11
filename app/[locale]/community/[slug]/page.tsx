@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/routing";
 import { listCommunities, findCommunityBySlug } from "@/lib/mockdb";
+import { NotificationPreferences } from "@/components/community/NotificationPreferences";
+import { ModerationPanel } from "@/components/community/ModerationPanel";
+import { BadgeShowcase } from "@/components/community/BadgeShowcase";
 
 export const revalidate = 0;
 
@@ -25,6 +28,18 @@ export default async function CommunityDetailPage({ params }: { params: Params }
         <h1 className="text-3xl font-semibold">{community.name}</h1>
         <p className="text-sm text-neutral-600">{community.description}</p>
       </header>
+
+      {community.notificationChannels?.length ? (
+        <Card>
+          <CardHeader>
+            <h2 className="text-lg font-semibold">{t("notifications.title")}</h2>
+            <p className="text-sm text-neutral-600">{t("notifications.subtitle")}</p>
+          </CardHeader>
+          <CardContent>
+            <NotificationPreferences channels={community.notificationChannels} communityName={community.name} />
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader>
@@ -57,6 +72,26 @@ export default async function CommunityDetailPage({ params }: { params: Params }
         </CardContent>
       </Card>
 
+      {community.threads?.length ? (
+        <Card>
+          <CardHeader>
+            <h2 className="text-lg font-semibold">{t("forum.title")}</h2>
+            <p className="text-sm text-neutral-600">{t("forum.subtitle")}</p>
+          </CardHeader>
+          <CardContent>
+            <ModerationPanel threads={community.threads} />
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {community.badges?.length ? (
+        <Card>
+          <CardContent>
+            <BadgeShowcase badges={community.badges} />
+          </CardContent>
+        </Card>
+      ) : null}
+
       {related.length > 0 && (
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">{t("related")}</h2>
@@ -69,12 +104,12 @@ export default async function CommunityDetailPage({ params }: { params: Params }
                     <Badge color={item.scope === "global" ? "green" : "neutral"}>{item.scope === "global" ? t("scope.global") : t("scope.campaign")}</Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-2 text-sm text-neutral-700">
-                  <p>{item.description}</p>
-                  <Link href={`/community/${item.slug}`} className="text-brand hover:underline text-xs">{t("open")}</Link>
-                </CardContent>
-              </Card>
-            ))}
+            <CardContent className="space-y-2 text-sm text-neutral-700">
+              <p>{item.description}</p>
+              <Link href={`/community/${item.slug}`} className="text-brand hover:underline text-xs">{t("open")}</Link>
+            </CardContent>
+          </Card>
+        ))}
           </div>
         </section>
       )}

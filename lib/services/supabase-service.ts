@@ -373,6 +373,10 @@ type ReservationRow = {
   status: string;
   tx_id: string | null;
   created_at: string;
+  lead_source: string | null;
+  campaign: string | null;
+  journey_stage: string | null;
+  last_engagement_at: string | null;
 };
 
 const mapReservationFromRow = (row: ReservationRow): Reservation => ({
@@ -383,7 +387,11 @@ const mapReservationFromRow = (row: ReservationRow): Reservation => ({
   amount: row.amount,
   status: row.status as Reservation['status'],
   txId: row.tx_id ?? undefined,
-  createdAt: parseDate(row.created_at) ?? new Date().toISOString()
+  createdAt: parseDate(row.created_at) ?? new Date().toISOString(),
+  leadSource: row.lead_source ?? undefined,
+  campaign: row.campaign ?? undefined,
+  journeyStage: (row.journey_stage as Reservation['journeyStage']) ?? undefined,
+  lastEngagementAt: row.last_engagement_at ?? undefined
 });
 
 const mapReservationToRow = (reservation: Reservation): ReservationRow => ({
@@ -394,7 +402,11 @@ const mapReservationToRow = (reservation: Reservation): ReservationRow => ({
   amount: reservation.amount,
   status: reservation.status,
   tx_id: reservation.txId ?? null,
-  created_at: reservation.createdAt
+  created_at: reservation.createdAt,
+  lead_source: reservation.leadSource ?? null,
+  campaign: reservation.campaign ?? null,
+  journey_stage: reservation.journeyStage ?? null,
+  last_engagement_at: reservation.lastEngagementAt ?? null
 });
 
 const mapReservationUpdatesToRow = (updates: Partial<Reservation>): Partial<ReservationRow> => {
@@ -416,6 +428,18 @@ const mapReservationUpdatesToRow = (updates: Partial<Reservation>): Partial<Rese
   }
   if (Object.prototype.hasOwnProperty.call(updates, 'txId')) {
     payload.tx_id = updates.txId ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'leadSource')) {
+    payload.lead_source = updates.leadSource ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'campaign')) {
+    payload.campaign = updates.campaign ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'journeyStage')) {
+    payload.journey_stage = updates.journeyStage ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'lastEngagementAt')) {
+    payload.last_engagement_at = updates.lastEngagementAt ?? null;
   }
   return payload;
 };
@@ -790,6 +814,11 @@ type CommunityRow = {
   tags: string[] | null;
   member_count: number;
   featured_posts: Community['featuredPosts'] | null;
+  moderators: string[] | null;
+  threads: Community['threads'] | null;
+  badges: Community['badges'] | null;
+  notification_channels: Community['notificationChannels'] | null;
+  push_topic: string | null;
 };
 
 const mapCommunityFromRow = (row: CommunityRow): Community => ({
@@ -804,7 +833,12 @@ const mapCommunityFromRow = (row: CommunityRow): Community => ({
   coverImage: row.cover_image ?? undefined,
   tags: row.tags ?? undefined,
   memberCount: row.member_count,
-  featuredPosts: row.featured_posts ?? undefined
+  featuredPosts: row.featured_posts ?? undefined,
+  moderators: row.moderators ?? undefined,
+  threads: row.threads ?? undefined,
+  badges: row.badges ?? undefined,
+  notificationChannels: row.notification_channels ?? undefined,
+  pushTopic: row.push_topic ?? undefined
 });
 
 const mapCommunityToRow = (community: Community): CommunityRow => ({
@@ -819,7 +853,12 @@ const mapCommunityToRow = (community: Community): CommunityRow => ({
   cover_image: community.coverImage ?? null,
   tags: community.tags ?? null,
   member_count: community.memberCount,
-  featured_posts: community.featuredPosts ?? null
+  featured_posts: community.featuredPosts ?? null,
+  moderators: community.moderators ?? null,
+  threads: community.threads ?? null,
+  badges: community.badges ?? null,
+  notification_channels: community.notificationChannels ?? null,
+  push_topic: community.pushTopic ?? null
 });
 
 const mapCommunityUpdatesToRow = (updates: Partial<Community>): Partial<CommunityRow> => {
@@ -856,6 +895,21 @@ const mapCommunityUpdatesToRow = (updates: Partial<Community>): Partial<Communit
   }
   if (Object.prototype.hasOwnProperty.call(updates, 'featuredPosts')) {
     payload.featured_posts = updates.featuredPosts ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'moderators')) {
+    payload.moderators = updates.moderators ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'threads')) {
+    payload.threads = updates.threads ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'badges')) {
+    payload.badges = updates.badges ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'notificationChannels')) {
+    payload.notification_channels = updates.notificationChannels ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'pushTopic')) {
+    payload.push_topic = updates.pushTopic ?? null;
   }
   return payload;
 };

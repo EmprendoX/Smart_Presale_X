@@ -37,6 +37,16 @@ export default async function CommunitiesPage({ params }: { params: { locale: st
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm text-neutral-700">
                   <div className="text-xs text-neutral-500">{t("members", { count: community.memberCount })}</div>
+                  {community.threads?.length ? (
+                    <div className="text-xs text-neutral-500">{t("threads", { count: community.threads.length })}</div>
+                  ) : null}
+                  {community.badges?.length ? (
+                    <div className="flex flex-wrap gap-2 text-[11px] text-neutral-500">
+                      {community.badges.slice(0, 3).map(badge => (
+                        <span key={badge.id} className="rounded-full bg-neutral-100 px-2 py-1">🏅 {badge.label}</span>
+                      ))}
+                    </div>
+                  ) : null}
                   {community.tags?.length ? (
                     <div className="flex flex-wrap gap-2 text-xs text-neutral-500">
                       {community.tags.map(tag => (
@@ -71,6 +81,16 @@ export default async function CommunitiesPage({ params }: { params: { locale: st
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm text-neutral-700">
                   <div className="text-xs text-neutral-500">{t("members", { count: community.memberCount })}</div>
+                  {community.threads?.length ? (
+                    <div className="text-xs text-neutral-500">{t("threads", { count: community.threads.length })}</div>
+                  ) : null}
+                  {community.badges?.length ? (
+                    <div className="flex flex-wrap gap-2 text-[11px] text-neutral-500">
+                      {community.badges.slice(0, 2).map(badge => (
+                        <span key={badge.id} className="rounded-full bg-neutral-100 px-2 py-1">🏅 {badge.label}</span>
+                      ))}
+                    </div>
+                  ) : null}
                   {community.tags?.length ? (
                     <div className="flex flex-wrap gap-2 text-xs text-neutral-500">
                       {community.tags.map(tag => (

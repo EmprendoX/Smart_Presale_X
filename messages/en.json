@@ -227,11 +227,20 @@
       "campaign": "Campaign"
     },
     "members": "{count, plural, one {# member} other {# members}}",
+    "threads": "{count, plural, one {# thread} other {# threads}}",
     "open": "View community",
     "detailSubtitle": "Join to receive construction updates, sales enablement content and concierge support.",
     "tags": "Topics",
     "featured": "Featured",
-    "related": "Related communities"
+    "related": "Related communities",
+    "notifications": {
+      "title": "Engagement alerts",
+      "subtitle": "Trigger push, email or Slack from one panel."
+    },
+    "forum": {
+      "title": "Moderation queue",
+      "subtitle": "Approve, pause or flag conversations in seconds."
+    }
   },
   "project": {
     "labels": {
@@ -343,6 +352,81 @@
       "fulfilled": "Fulfilled"
     },
     "progress": "Presale progress"
+  },
+  "investmentRoom": {
+    "securedArea": "Investment room",
+    "title": "Documents & signatures",
+    "subtitle": "Share due diligence packs, signature flows and escrow coordination for {project}.",
+    "access": {
+      "title": "Access control",
+      "subtitle": "Verify KYC status and authorized roles before exposing sensitive documents.",
+      "viewer": "Viewer",
+      "anonymous": "Guest",
+      "kycReady": "KYC validated",
+      "kycMissing": "Complete KYC",
+      "restricted": {
+        "title": "Access required",
+        "message": "Only verified buyers or admins can review investment documents.",
+        "actions": {
+          "startKyc": "Start verification",
+          "inviteTeam": "Invite teammate"
+        }
+      },
+      "granted": {
+        "title": "Secure sharing enabled",
+        "point1": "Audit trail activated for each download and signature.",
+        "point2": "Watermarked previews for non-firmed prospects.",
+        "point3": "Escrow instructions aligned with active round."
+      }
+    },
+    "documents": {
+      "title": "Due diligence pack",
+      "subtitle": "Render PDFs, permits and terms ready for download."
+    },
+    "signature": {
+      "title": "Digital signature"
+    },
+    "funding": {
+      "title": "Funding playbook",
+      "subtitle": "Align escrow, compliance and countersignature steps.",
+      "escrow": "Escrow deposit",
+      "escrowDetail": "Reserve slot with a deposit of {amount} in escrow.",
+      "dynamic": "dynamic",
+      "auditTrail": "Audit trail",
+      "auditDetail": "We log every action, IP address and timestamp for regulatory review."
+    }
+  },
+  "devAnalytics": {
+    "title": "Growth analytics",
+    "subtitle": "Monitor conversion funnels, lead attribution and automation coverage in real time.",
+    "metrics": {
+      "totalLeads": "Leads",
+      "conversion": "Conversion",
+      "revenue": "Collected deposits",
+      "automations": "Active automations"
+    },
+    "leadOrigins": {
+      "title": "Lead origin mix",
+      "subtitle": "Compare paid, organic and community-sourced leads."
+    },
+    "conversionTimeline": {
+      "title": "Conversion timeline",
+      "subtitle": "Daily conversion rate (%)"
+    },
+    "insights": {
+      "engagement": "Engagement velocity",
+      "engagementCopy": "Average follow-up happens {hours} hours after first touch.",
+      "campaigns": "Campaign coverage",
+      "campaignCopy": "{count} campaigns nurturing prospects across channels.",
+      "rounds": "Rounds open",
+      "roundCopy": "{count} rounds open across {projects} projects."
+    }
+  },
+  "adminAutomations": {
+    "badge": "Automation suite",
+    "title": "Automation workflows",
+    "subtitle": "Orchestrate omnichannel nurturing, alerts and ops handoffs.",
+    "tableTitle": "Configured automations"
   },
   "reserve": {
     "title": "Reserve slots",
@@ -604,6 +688,9 @@
       "form": {
         "namePlaceholder": "Internal flow name",
         "anyProject": "Apply to any project",
+        "project": "Project",
+        "trigger": "Trigger",
+        "channel": "Channel",
         "descriptionPlaceholder": "Notes, playbook or checklist",
         "submit": "Save flow"
       },
@@ -624,6 +711,7 @@
       },
       "pause": "Pause",
       "activate": "Activate",
+      "cycle": "Advance status",
       "empty": "No automations yet.",
       "created": "Automation created",
       "statusUpdated": "Status updated"

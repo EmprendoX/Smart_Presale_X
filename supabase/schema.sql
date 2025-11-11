@@ -127,7 +127,11 @@ create table if not exists reservations (
   amount integer not null,
   status text not null check (status in ('pending','confirmed','refunded','assigned','waitlisted')),
   tx_id text,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  lead_source text,
+  campaign text,
+  journey_stage text check (journey_stage in ('lead','nurturing','reserved','closed_won','closed_lost')),
+  last_engagement_at timestamptz
 );
 
 create table if not exists transactions (
@@ -224,7 +228,12 @@ create table if not exists communities (
   cover_image text,
   tags text[],
   member_count integer not null default 0,
-  featured_posts jsonb
+  featured_posts jsonb,
+  moderators text[],
+  threads jsonb,
+  badges jsonb,
+  notification_channels jsonb,
+  push_topic text
 );
 
 -- Automations & agents ---------------------------------------------------

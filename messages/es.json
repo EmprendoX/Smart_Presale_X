@@ -227,11 +227,20 @@
       "campaign": "Campaña"
     },
     "members": "{count, plural, one {# miembro} other {# miembros}}",
+    "threads": "{count, plural, one {# hilo} other {# hilos}}",
     "open": "Ver comunidad",
     "detailSubtitle": "Súmate para recibir avances de obra, materiales comerciales y soporte dedicado.",
     "tags": "Temas",
     "featured": "Destacado",
-    "related": "Otras comunidades"
+    "related": "Otras comunidades",
+    "notifications": {
+      "title": "Alertas de engagement",
+      "subtitle": "Dispara push, email o Slack desde un solo panel."
+    },
+    "forum": {
+      "title": "Moderación en vivo",
+      "subtitle": "Aprueba, pausa o marca conversaciones en segundos."
+    }
   },
   "project": {
     "labels": {
@@ -343,6 +352,81 @@
       "fulfilled": "Cumplido"
     },
     "progress": "Progreso de preventa"
+  },
+  "investmentRoom": {
+    "securedArea": "Sala de inversión",
+    "title": "Documentos y firmas",
+    "subtitle": "Comparte dossiers, flujos de firma y coordinación de escrow para {project}.",
+    "access": {
+      "title": "Control de acceso",
+      "subtitle": "Verifica KYC y roles autorizados antes de mostrar información sensible.",
+      "viewer": "Visualizador",
+      "anonymous": "Invitado",
+      "kycReady": "KYC validado",
+      "kycMissing": "Completa KYC",
+      "restricted": {
+        "title": "Acceso requerido",
+        "message": "Solo compradores verificados o admins pueden revisar la documentación.",
+        "actions": {
+          "startKyc": "Iniciar verificación",
+          "inviteTeam": "Invitar a mi equipo"
+        }
+      },
+      "granted": {
+        "title": "Compartición segura activa",
+        "point1": "Bitácora auditada para cada descarga y firma.",
+        "point2": "Previsualizaciones con marca de agua para prospectos.",
+        "point3": "Instrucciones de escrow alineadas a la ronda."
+      }
+    },
+    "documents": {
+      "title": "Paquete de due diligence",
+      "subtitle": "Permisos, contratos y términos listos para descargar."
+    },
+    "signature": {
+      "title": "Firma digital"
+    },
+    "funding": {
+      "title": "Playbook de fondeo",
+      "subtitle": "Orquesta escrow, cumplimiento y contra-firmas.",
+      "escrow": "Depósito en escrow",
+      "escrowDetail": "Reserva tu lugar con un depósito de {amount} en escrow.",
+      "dynamic": "dinámico",
+      "auditTrail": "Bitácora",
+      "auditDetail": "Registramos cada acción, IP y sello de tiempo para auditoría."
+    }
+  },
+  "devAnalytics": {
+    "title": "Analítica comercial",
+    "subtitle": "Monitorea embudos, atribución y cobertura de automatizaciones en tiempo real.",
+    "metrics": {
+      "totalLeads": "Leads",
+      "conversion": "Conversión",
+      "revenue": "Depósitos cobrados",
+      "automations": "Automatizaciones activas"
+    },
+    "leadOrigins": {
+      "title": "Origen de leads",
+      "subtitle": "Compara paid media, orgánico y comunidad."
+    },
+    "conversionTimeline": {
+      "title": "Timeline de conversión",
+      "subtitle": "Tasa diaria (%)"
+    },
+    "insights": {
+      "engagement": "Velocidad de seguimiento",
+      "engagementCopy": "El seguimiento ocurre en promedio a las {hours} horas del primer contacto.",
+      "campaigns": "Cobertura de campañas",
+      "campaignCopy": "{count} campañas nutriendo prospectos en canales coordinados.",
+      "rounds": "Rondas abiertas",
+      "roundCopy": "{count} rondas abiertas en {projects} proyectos."
+    }
+  },
+  "adminAutomations": {
+    "badge": "Suite de automatización",
+    "title": "Flujos automatizados",
+    "subtitle": "Orquesta nurturing, alertas y handoffs operativos desde un hub.",
+    "tableTitle": "Automatizaciones configuradas"
   },
   "reserve": {
     "title": "Reservar slots",
@@ -604,6 +688,9 @@
       "form": {
         "namePlaceholder": "Nombre interno del flujo",
         "anyProject": "Aplicar a cualquier proyecto",
+        "project": "Proyecto",
+        "trigger": "Disparador",
+        "channel": "Canal",
         "descriptionPlaceholder": "Notas del flujo, playbook o checklist",
         "submit": "Guardar flujo"
       },
@@ -624,6 +711,7 @@
       },
       "pause": "Pausar",
       "activate": "Activar",
+      "cycle": "Cambiar estado",
       "empty": "Aún no hay automatizaciones configuradas.",
       "created": "Automatización creada",
       "statusUpdated": "Estado actualizado"
