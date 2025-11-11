@@ -102,5 +102,14 @@
     "campaign": "Villa Aurora Tours",
     "journeyStage": "closed_won",
     "lastEngagementAt": "2025-11-10T12:30:00.000Z"
+  },
+  {
+    "id": "74a19cdd-6eab-4ab2-b774-952189bc46b6",
+    "roundId": "09dbf75c-7623-4fa2-bdb9-f55630f0253e",
+    "userId": "u_dev_1",
+    "slots": 1,
+    "amount": 500,
+    "status": "confirmed",
+    "createdAt": "2025-11-10T21:25:10.659Z"
   }
 ]

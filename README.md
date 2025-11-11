@@ -40,159 +40,115 @@ Usuarios disponibles:
 
 ## Migración a Supabase
 
-### Paso 1: Configurar Supabase
+### Paso 1: Crear Proyecto en Supabase
 
-1. Crea un proyecto en [Supabase](https://supabase.com)
-2. Obtén tus credenciales:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `SUPABASE_SERVICE_ROLE_KEY`
+1. Ve a [Supabase](https://supabase.com) y crea un nuevo proyecto
+2. Espera a que el proyecto se inicialice completamente (puede tomar unos minutos)
+3. Obtén tus credenciales desde el Dashboard:
+   - Ve a **Settings** → **API**
+   - Copia la **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
+   - Copia la clave **anon** `public` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - Copia la clave **service_role** `secret` → `SUPABASE_SERVICE_ROLE_KEY`
+   - ⚠️ **IMPORTANTE**: La clave `service_role` es secreta y nunca debe exponerse al cliente
 
-3. Agrega a tu `.env.local`:
+### Paso 2: Configurar Variables de Entorno
+
+Crea un archivo `.env.local` en la raíz del proyecto con:
+
 ```env
 USE_SUPABASE=true
-NEXT_PUBLIC_SUPABASE_URL=tu_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
-SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
 
-### Paso 2: Crear Tablas
+Para más detalles sobre variables de entorno, consulta [`docs/environment-variables.md`](docs/environment-variables.md).
 
-Ejecuta este SQL en el SQL Editor de Supabase (disponible también en `supabase/schema.sql`):
+### Paso 3: Crear Tablas y Configuración
 
-```sql
--- Tabla de proyectos
-CREATE TABLE projects (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  slug TEXT UNIQUE NOT NULL,
-  name TEXT NOT NULL,
-  city TEXT NOT NULL,
-  country TEXT NOT NULL,
-  currency TEXT NOT NULL CHECK (currency IN ('USD', 'MXN')),
-  status TEXT NOT NULL CHECK (status IN ('draft', 'review', 'published')),
-  images TEXT[] DEFAULT '{}',
-  video_url TEXT,
-  description TEXT NOT NULL,
-  developer_id TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+Ejecuta los siguientes archivos SQL en el **SQL Editor** de Supabase (en orden):
 
--- Tabla de rondas
-CREATE TABLE rounds (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
-  goal_type TEXT NOT NULL CHECK (goal_type IN ('reservations', 'amount')),
-  goal_value INTEGER NOT NULL,
-  deposit_amount INTEGER NOT NULL,
-  slots_per_person INTEGER NOT NULL,
-  deadline_at TIMESTAMPTZ NOT NULL,
-  rule TEXT NOT NULL CHECK (rule IN ('all_or_nothing', 'partial')),
-  partial_threshold DECIMAL DEFAULT 0.7,
-  status TEXT NOT NULL CHECK (status IN ('open', 'nearly_full', 'closed', 'not_met', 'fulfilled')),
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+#### 3.1. Schema Principal
 
--- Tabla de reservas
-CREATE TABLE reservations (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  round_id UUID REFERENCES rounds(id) ON DELETE CASCADE,
-  user_id TEXT NOT NULL,
-  slots INTEGER NOT NULL,
-  amount INTEGER NOT NULL,
-  status TEXT NOT NULL CHECK (status IN ('pending', 'confirmed', 'refunded', 'assigned', 'waitlisted')),
-  tx_id TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+Ejecuta `supabase/schema.sql` completo. Este archivo incluye:
+- Tablas principales (tenants, projects, rounds, reservations, transactions, etc.)
+- Tablas KYC (kyc_profiles, kyc_documents)
+- Índices para optimización
+- Políticas RLS (Row Level Security)
+- Datos iniciales (tenant por defecto)
 
--- Tabla de transacciones
-CREATE TABLE transactions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  reservation_id UUID REFERENCES reservations(id) ON DELETE CASCADE,
-  provider TEXT NOT NULL CHECK (provider IN ('simulated', 'stripe', 'escrow')),
-  amount INTEGER NOT NULL,
-  currency TEXT NOT NULL CHECK (currency IN ('USD', 'MXN')),
-  status TEXT NOT NULL CHECK (status IN ('pending', 'succeeded', 'refunded')),
-  payout_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+#### 3.2. Storage Bucket para KYC
 
--- Índices para mejor rendimiento
-CREATE INDEX idx_rounds_project_id ON rounds(project_id);
-CREATE INDEX idx_reservations_round_id ON reservations(round_id);
-CREATE INDEX idx_reservations_user_id ON reservations(user_id);
-CREATE INDEX idx_transactions_reservation_id ON transactions(reservation_id);
-```
+Ejecuta `supabase/storage-setup.sql` para crear el bucket de almacenamiento para documentos KYC:
 
-### Paso 3: Implementar SupabaseService
+- Crea el bucket `kyc-documents` (privado)
+- Configura políticas de acceso (usuarios solo pueden acceder a sus propios archivos)
+- Establece límites de tamaño y tipos MIME permitidos
 
-1. Instala el cliente de Supabase:
-```bash
-npm install @supabase/supabase-js
-```
+**Nota**: También puedes crear el bucket manualmente desde el Dashboard:
+1. Ve a **Storage** en el menú lateral
+2. Clic en **New bucket**
+3. Nombre: `kyc-documents`
+4. Marca como **Private**
+5. Crea las políticas manualmente usando el SQL de `storage-setup.sql`
 
-2. Actualiza `lib/services/supabase-service.ts` con la implementación real usando el cliente de Supabase.
+### Paso 4: Configurar Autenticación
 
-3. La aplicación automáticamente usará Supabase cuando `USE_SUPABASE=true`.
+En el Dashboard de Supabase:
 
-### Paso 4: Migrar Datos JSON a Supabase
+1. Ve a **Authentication** → **Providers**
+2. Habilita **Email** provider (ya está habilitado por defecto)
+3. Configura **Email Templates** si lo deseas (opcional)
+4. Si usas OAuth, configura los providers necesarios (Google, GitHub, etc.)
+5. En **URL Configuration**, agrega tus redirect URLs:
+   - `http://localhost:3000/**` (desarrollo)
+   - `https://your-domain.com/**` (producción)
 
-Ejecuta el script `scripts/migrate-to-supabase.ts` para transferir datos existentes desde los JSON. Requiere que tengas configuradas las variables de entorno `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY`.
+### Paso 5: Verificar Instalación
+
+1. Verifica que todas las tablas se crearon correctamente:
+   - Ve a **Table Editor** en el Dashboard
+   - Deberías ver todas las tablas: `tenants`, `projects`, `rounds`, `reservations`, `transactions`, `kyc_profiles`, `kyc_documents`, etc.
+
+2. Verifica que RLS está habilitado:
+   - En **Table Editor**, cada tabla debe mostrar "RLS enabled"
+
+3. Verifica el bucket de storage:
+   - Ve a **Storage** → Deberías ver el bucket `kyc-documents`
+
+### Paso 6: Migrar Datos JSON a Supabase
+
+Si tienes datos existentes en archivos JSON, ejecuta el script de migración:
 
 ```bash
 npx ts-node -r tsconfig-paths/register scripts/migrate-to-supabase.ts
 ```
 
-Código base del script:
+Este script:
+- Migra todos los datos de `data/*.json` a Supabase
+- Preserva IDs y relaciones
+- Maneja duplicados (upsert)
+- Muestra progreso en consola
 
-```typescript
-// scripts/migrate-to-supabase.ts
-import { createClient } from '@supabase/supabase-js';
-import { jsonDb } from '../lib/storage/json-db';
+**Nota**: Asegúrate de tener configuradas las variables de entorno antes de ejecutar el script.
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+### Paso 7: Probar la Aplicación
 
-async function migrate() {
-  // Migrar proyectos
-  const projects = await jsonDb.getProjects();
-  for (const p of projects) {
-    await supabase.from('projects').insert({
-      id: p.id,
-      slug: p.slug,
-      name: p.name,
-      city: p.city,
-      country: p.country,
-      currency: p.currency,
-      status: p.status,
-      images: p.images,
-      video_url: p.videoUrl,
-      description: p.description,
-      developer_id: p.developerId,
-      created_at: p.createdAt
-    });
-  }
-
-  // Similar para rounds, reservations, transactions...
-}
+1. Inicia el servidor de desarrollo:
+```bash
+npm run dev
 ```
 
-### Paso 5: Configurar RLS (Row Level Security)
+2. Verifica que la aplicación esté usando Supabase:
+   - Abre la consola del navegador
+   - No deberías ver errores relacionados con Supabase
+   - Los datos deberían cargarse desde Supabase, no desde JSON
 
-```sql
--- Habilitar RLS
-ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
-ALTER TABLE rounds ENABLE ROW LEVEL SECURITY;
-ALTER TABLE reservations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
-
--- Políticas de ejemplo (ajusta según tus necesidades)
-CREATE POLICY "Projects are viewable by everyone" ON projects FOR SELECT USING (true);
-CREATE POLICY "Developers can insert their own projects" ON projects FOR INSERT WITH CHECK (auth.uid()::text = developer_id);
-
-CREATE POLICY "Reservations are viewable by owner" ON reservations FOR SELECT USING (auth.uid()::text = user_id);
-```
+3. Prueba las funcionalidades principales:
+   - **Autenticación**: Registro e inicio de sesión
+   - **KYC**: Completar perfil y subir documentos
+   - **Proyectos**: Crear y listar proyectos
+   - **Reservas**: Crear reservas y procesar pagos
 
 ## Estructura de Datos
 
@@ -210,29 +166,69 @@ CREATE POLICY "Reservations are viewable by owner" ON reservations FOR SELECT US
 | `reservationId` | `reservation_id` | UUID |
 | `payoutAt` | `payout_at` | TIMESTAMPTZ |
 
-## Conectar Stripe Connect
+## Configuración de Pagos con Stripe
 
-1. Instala Stripe:
-```bash
-npm install stripe
+### Configuración Básica
+
+1. Crea una cuenta en [Stripe](https://stripe.com) (o usa modo test)
+2. Obtén tus claves API desde el [Dashboard de Stripe](https://dashboard.stripe.com/apikeys)
+3. Agrega a tu `.env.local`:
+
+```env
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 ```
 
-2. En `/api/checkout`:
-   - Crear PaymentIntent con **destination charges** a la cuenta conectada del desarrollador
-   - Retener fondos hasta cumplir meta
-   - `payout` al cerrar la ronda exitosamente
+**Nota**: Si no configuras Stripe, la aplicación usará un driver mock para pruebas.
 
-3. Manejar webhooks:
+### Configurar Webhooks
+
+1. En el Dashboard de Stripe, ve a **Developers** → **Webhooks**
+2. Agrega un endpoint: `https://your-domain.com/api/payments/stripe/webhook`
+3. Selecciona los eventos:
    - `payment_intent.succeeded`
+   - `payment_intent.payment_failed`
    - `charge.refunded`
+4. Copia el **Signing secret** y agrégalo a `STRIPE_WEBHOOK_SECRET`
+
+### Stripe Connect (Multi-vendor)
+
+Para escenarios marketplace donde cada desarrollador tiene su propia cuenta:
+
+1. Configura Stripe Connect en tu cuenta
+2. Agrega `STRIPE_CONNECT_ACCOUNT_ID` a las variables de entorno
+3. El sistema usará **destination charges** automáticamente
 
 ## Escrow.com / Mangopay (Custodia)
 
 Sustituye `/api/checkout` para abrir transacción en custodia y liberar al cumplir meta/fecha.
 
-## KYC/AML
+## Sistema KYC (Know Your Customer)
 
-Si depósito >= 1,000 → lanzar verificación (Persona/Onfido) y bloquear `payout` hasta verificado.
+La aplicación incluye un sistema completo de KYC:
+
+### Tablas KYC
+
+- **`kyc_profiles`**: Almacena datos personales (nombre, fecha de nacimiento, dirección, etc.)
+- **`kyc_documents`**: Rastrea documentos subidos (ID frontal, ID trasero, comprobante de domicilio)
+
+### Storage
+
+- **Bucket `kyc-documents`**: Almacena archivos de documentos de forma privada
+- Los usuarios solo pueden acceder a sus propios documentos
+- Límite de 5MB por archivo
+- Tipos permitidos: JPEG, PNG, WebP, PDF
+
+### Flujo de Verificación
+
+1. Usuario completa datos personales → `kyc_profiles` con status `pending`
+2. Usuario sube documentos → `kyc_documents` con status `pending`
+3. Admin revisa y aprueba/rechaza → status cambia a `approved` o `rejected`
+4. Usuario puede proceder con reservas una vez verificado
+
+### Integración con Reservas
+
+El sistema puede requerir KYC completo antes de permitir reservas de alto valor (configurable).
 
 ## Notificaciones (n8n / Postmark / Twilio)
 

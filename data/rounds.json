@@ -136,5 +136,19 @@
     "status": "open",
     "createdAt": "2025-11-06T21:56:05.633Z",
     "groupSlots": 20
+  },
+  {
+    "id": "09dbf75c-7623-4fa2-bdb9-f55630f0253e",
+    "projectId": "2bb96a6b-6360-45d5-bf72-fb7909bd364b",
+    "goalType": "reservations",
+    "goalValue": 30,
+    "depositAmount": 500,
+    "slotsPerPerson": 10,
+    "deadlineAt": "2026-02-08T20:37:37.745Z",
+    "rule": "all_or_nothing",
+    "partialThreshold": 0.7,
+    "status": "open",
+    "createdAt": "2025-11-10T20:37:37.900Z",
+    "groupSlots": null
   }
 ]

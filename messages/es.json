@@ -291,7 +291,10 @@
       "last": "Último",
       "first": "Primero",
       "variation": "Variación",
-      "note": "*Curva se actualiza con trades del mercado secundario (mock)."
+      "note": "*Curva se actualiza con trades del mercado secundario (mock).",
+      "noData": "Sin datos",
+      "range": "Rango",
+      "lastPrice": "último"
     },
     "secondary": {
       "noRound": "Este proyecto no tiene una ronda activa.",
@@ -306,7 +309,9 @@
       "buy": "Comprar",
       "invalidData": "Datos inválidos",
       "listingPublished": "Listado publicado",
-      "purchaseCompleted": "Compra realizada (simulada)"
+      "purchaseCompleted": "Compra realizada (simulada)",
+      "slotsLabel": "slots",
+      "askPriceLabel": "Precio pedido"
     },
     "timeline": {
       "title": "Hitos",
@@ -582,10 +587,10 @@
       "countryRequired": "El país es requerido",
       "descriptionRequired": "La descripción es requerida",
       "imagesRequired": "Agrega al menos una imagen",
-      "goalValueRequired": "El valor meta debe ser mayor a 0",
-      "depositRequired": "El depósito debe ser mayor a 0",
-      "slotsPerPersonRequired": "Los slots por persona deben ser mayor a 0",
-      "deadlineDaysRequired": "Los días deben ser mayor a 0",
+      "goalValueRequired": "El valor meta debe ser mayor que 0",
+      "depositRequired": "El depósito debe ser mayor que 0",
+      "slotsPerPersonRequired": "Los slots por persona deben ser mayor que 0",
+      "deadlineDaysRequired": "Los días deben ser mayor que 0",
       "totalUnitsInvalid": "Las unidades totales deben ser un número positivo",
       "groupSlotsInvalid": "El grupo de preventa debe ser un número positivo",
       "validationError": "Por favor completa todos los campos requeridos"

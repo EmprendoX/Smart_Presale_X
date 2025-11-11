@@ -402,8 +402,7 @@ export default function DevPanel() {
                 <div className="text-sm text-neutral-600">
                   {t("round.round")}: {project.round.goalType === "reservations"
                     ? `${project.round.goalValue} ${t("goalTypes.reservations").toLowerCase()}`
-                    : fmtCurrency(project.round.goalValue, project.currency, locale)} •
-                  {t("round.deposit")}: {fmtCurrency(project.round.depositAmount, project.currency, locale)}
+                    : fmtCurrency(project.round.goalValue, project.currency, locale)} • {t("round.deposit")}: {fmtCurrency(project.round.depositAmount, project.currency, locale)}
                 </div>
               ) : (
                 <div className="text-sm text-neutral-500">{t("round.noRound")}</div>
@@ -591,35 +590,35 @@ export default function DevPanel() {
           <h3 className="font-medium text-lg">{t("financialInfo")}</h3>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-sm font-medium">Unidades totales</label>
+              <label className="text-sm font-medium">{t("fields.totalUnits")}</label>
               <Input
                 type="number"
                 min="1"
-                placeholder="Ej: 120"
+                placeholder={t("fields.totalUnitsPlaceholder")}
                 value={pTotalUnits}
                 onChange={e => setPTotalUnits(e.target.value ? parseInt(e.target.value, 10) : "")}
               />
-              <p className="text-xs text-neutral-500 mt-1">Número total de unidades del desarrollo</p>
+              <p className="text-xs text-neutral-500 mt-1">{t("fields.totalUnitsHelp")}</p>
             </div>
             <div>
-              <label className="text-sm font-medium">Tipo de propiedad</label>
+              <label className="text-sm font-medium">{t("fields.propertyType")}</label>
               <Select
                 value={pPropertyType}
                 onChange={e => setPPropertyType(e.target.value)}
               >
-                <option value="">Seleccionar...</option>
-                <option value="Departamentos">Departamentos</option>
-                <option value="Casas">Casas</option>
-                <option value="Lotes">Lotes</option>
-                <option value="Villa">Villa</option>
-                <option value="Townhouses">Townhouses</option>
-                <option value="Condominios">Condominios</option>
-                <option value="Otro">Otro</option>
+                <option value="">{t("fields.propertyTypeSelect")}</option>
+                <option value="Departamentos">{t("propertyTypes.apartments")}</option>
+                <option value="Casas">{t("propertyTypes.houses")}</option>
+                <option value="Lotes">{t("propertyTypes.lots")}</option>
+                <option value="Villa">{t("propertyTypes.villa")}</option>
+                <option value="Townhouses">{t("propertyTypes.townhouses")}</option>
+                <option value="Condominios">{t("propertyTypes.condos")}</option>
+                <option value="Otro">{t("propertyTypes.other")}</option>
               </Select>
               {pPropertyType === "Otro" && (
                 <Input
                   type="text"
-                  placeholder="Especificar tipo de propiedad"
+                  placeholder={t("fields.propertyTypeOther")}
                   value={pPropertyType}
                   onChange={e => setPPropertyType(e.target.value)}
                   className="mt-2"
@@ -627,35 +626,35 @@ export default function DevPanel() {
               )}
             </div>
             <div>
-              <label className="text-sm font-medium">Costo de la propiedad ({pCurrency})</label>
+              <label className="text-sm font-medium">{t("fields.propertyPrice", { currency: pCurrency })}</label>
               <Input
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="Ej: 250000"
+                placeholder={t("fields.propertyPricePlaceholder")}
                 value={pPropertyPrice}
                 onChange={e => setPPropertyPrice(e.target.value ? parseFloat(e.target.value) : "")}
               />
-              <p className="text-xs text-neutral-500 mt-1">Precio por unidad/propiedad</p>
+              <p className="text-xs text-neutral-500 mt-1">{t("fields.propertyPriceHelp")}</p>
             </div>
             <div>
-              <label className="text-sm font-medium">Etapa de desarrollo</label>
+              <label className="text-sm font-medium">{t("fields.developmentStage")}</label>
               <Select
                 value={pDevelopmentStage}
                 onChange={e => setPDevelopmentStage(e.target.value)}
               >
-                <option value="">Seleccionar...</option>
-                <option value="Preventa">Preventa</option>
-                <option value="Pre-construcción">Pre-construcción</option>
-                <option value="Construcción">Construcción</option>
-                <option value="Entrega">Entrega</option>
-                <option value="Post-entrega">Post-entrega</option>
-                <option value="Otro">Otro</option>
+                <option value="">{t("fields.developmentStageSelect")}</option>
+                <option value="Preventa">{t("stages.presale")}</option>
+                <option value="Pre-construcción">{t("stages.preConstruction")}</option>
+                <option value="Construcción">{t("stages.construction")}</option>
+                <option value="Entrega">{t("stages.delivery")}</option>
+                <option value="Post-entrega">{t("stages.postDelivery")}</option>
+                <option value="Otro">{t("stages.other")}</option>
               </Select>
               {pDevelopmentStage === "Otro" && (
                 <Input
                   type="text"
-                  placeholder="Especificar etapa"
+                  placeholder={t("fields.developmentStageOther")}
                   value={pDevelopmentStage}
                   onChange={e => setPDevelopmentStage(e.target.value)}
                   className="mt-2"
@@ -666,14 +665,14 @@ export default function DevPanel() {
 
           <hr className="my-4"/>
 
-          <h3 className="font-medium text-lg">Detalles de la propiedad (opcional)</h3>
+          <h3 className="font-medium text-lg">{t("propertyDetails")}</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div>
-              <label className="text-sm font-medium">Recámaras</label>
+              <label className="text-sm font-medium">{t("fields.bedrooms")}</label>
               <Input
                 type="number"
                 min="0"
-                placeholder="Ej: 3"
+                placeholder={t("fields.bedroomsPlaceholder")}
                 value={pPropertyDetails.bedrooms || ""}
                 onChange={e => setPPropertyDetails({
                   ...pPropertyDetails,
@@ -682,11 +681,11 @@ export default function DevPanel() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Baños completos</label>
+              <label className="text-sm font-medium">{t("fields.bathrooms")}</label>
               <Input
                 type="number"
                 min="0"
-                placeholder="Ej: 2"
+                placeholder={t("fields.bathroomsPlaceholder")}
                 value={pPropertyDetails.bathrooms || ""}
                 onChange={e => setPPropertyDetails({
                   ...pPropertyDetails,
@@ -695,11 +694,11 @@ export default function DevPanel() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Medios baños</label>
+              <label className="text-sm font-medium">{t("fields.halfBathrooms")}</label>
               <Input
                 type="number"
                 min="0"
-                placeholder="Ej: 1"
+                placeholder={t("fields.halfBathroomsPlaceholder")}
                 value={pPropertyDetails.halfBathrooms || ""}
                 onChange={e => setPPropertyDetails({
                   ...pPropertyDetails,
@@ -708,12 +707,12 @@ export default function DevPanel() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Superficie (m²)</label>
+              <label className="text-sm font-medium">{t("fields.surfaceArea")}</label>
               <Input
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="Ej: 120.5"
+                placeholder={t("fields.surfaceAreaPlaceholder")}
                 value={pPropertyDetails.surfaceArea || ""}
                 onChange={e => setPPropertyDetails({
                   ...pPropertyDetails,
@@ -722,11 +721,11 @@ export default function DevPanel() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Estacionamientos</label>
+              <label className="text-sm font-medium">{t("fields.parkingSpaces")}</label>
               <Input
                 type="number"
                 min="0"
-                placeholder="Ej: 2"
+                placeholder={t("fields.parkingSpacesPlaceholder")}
                 value={pPropertyDetails.parkingSpaces || ""}
                 onChange={e => setPPropertyDetails({
                   ...pPropertyDetails,
@@ -735,11 +734,11 @@ export default function DevPanel() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Niveles/Pisos</label>
+              <label className="text-sm font-medium">{t("fields.floors")}</label>
               <Input
                 type="number"
                 min="0"
-                placeholder="Ej: 2"
+                placeholder={t("fields.floorsPlaceholder")}
                 value={pPropertyDetails.floors || ""}
                 onChange={e => setPPropertyDetails({
                   ...pPropertyDetails,

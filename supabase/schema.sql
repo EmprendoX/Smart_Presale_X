@@ -6,7 +6,7 @@ create extension if not exists "pgcrypto";
 
 -- Tenancy ----------------------------------------------------------------
 create table if not exists tenants (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key,
   slug text unique not null,
   name text not null,
   status text not null default 'active' check (status in ('active','inactive','suspended')),
@@ -18,7 +18,7 @@ create table if not exists tenants (
 
 create table if not exists tenant_settings (
   id uuid primary key default gen_random_uuid(),
-  tenant_id uuid not null references tenants(id) on delete cascade,
+  tenant_id text not null references tenants(id) on delete cascade,
   logo_url text,
   dark_logo_url text,
   square_logo_url text,
@@ -39,7 +39,7 @@ create table if not exists tenant_settings (
 
 create table if not exists app_users (
   id text primary key,
-  tenant_id uuid not null references tenants(id) on delete cascade,
+  tenant_id text not null references tenants(id) on delete cascade,
   name text not null,
   role text not null check (role in ('buyer','developer','admin')),
   kyc_status text not null check (kyc_status in ('none','basic','verified')),
@@ -48,9 +48,39 @@ create table if not exists app_users (
   created_at timestamptz not null default now()
 );
 
+-- KYC Profiles & Documents ------------------------------------------------
+create table if not exists kyc_profiles (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null unique references app_users(id) on delete cascade,
+  first_name text not null,
+  last_name text not null,
+  birthdate date not null,
+  country text not null,
+  phone text not null,
+  address_line1 text not null,
+  address_line2 text,
+  city text not null,
+  state text,
+  postal_code text,
+  status text not null default 'pending' check (status in ('pending','basic','verified','rejected')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists kyc_documents (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null references app_users(id) on delete cascade,
+  type text not null check (type in ('id_front','id_back','proof_of_address')),
+  path text not null,
+  status text not null default 'pending' check (status in ('pending','approved','rejected')),
+  uploaded_at timestamptz not null default now(),
+  reviewed_at timestamptz,
+  reviewed_by text
+);
+
 create table if not exists developers (
   id text primary key,
-  tenant_id uuid not null references tenants(id) on delete cascade,
+  tenant_id text not null references tenants(id) on delete cascade,
   user_id text not null,
   company text not null,
   verified_at timestamptz
@@ -58,7 +88,7 @@ create table if not exists developers (
 
 create table if not exists clients (
   id uuid primary key default gen_random_uuid(),
-  tenant_id uuid not null references tenants(id) on delete cascade,
+  tenant_id text not null references tenants(id) on delete cascade,
   name text not null,
   contact_name text,
   contact_email text,
@@ -78,7 +108,7 @@ create table if not exists projects (
   country text not null,
   currency text not null check (currency in ('USD','MXN')),
   status text not null check (status in ('draft','review','published')),
-  tenant_id uuid not null references tenants(id) on delete cascade,
+  tenant_id text not null references tenants(id) on delete cascade,
   images text[] default '{}',
   video_url text,
   description text not null,
@@ -222,7 +252,7 @@ create table if not exists communities (
   name text not null,
   description text not null,
   scope text not null check (scope in ('global','campaign')),
-  tenant_id uuid not null references tenants(id) on delete cascade,
+  tenant_id text not null references tenants(id) on delete cascade,
   project_id uuid references projects(id) on delete cascade,
   round_id uuid references rounds(id) on delete cascade,
   cover_image text,
@@ -281,11 +311,16 @@ create index if not exists idx_communities_project_id on communities(project_id)
 create index if not exists idx_communities_tenant_id on communities(tenant_id);
 create index if not exists idx_tenant_settings_tenant_id on tenant_settings(tenant_id);
 create index if not exists idx_clients_tenant_id on clients(tenant_id);
+create index if not exists idx_kyc_profiles_user_id on kyc_profiles(user_id);
+create index if not exists idx_kyc_documents_user_id on kyc_documents(user_id);
+create index if not exists idx_kyc_documents_status on kyc_documents(status);
 
 -- Row Level Security -----------------------------------------------------
 alter table tenants enable row level security;
 alter table tenant_settings enable row level security;
 alter table app_users enable row level security;
+alter table kyc_profiles enable row level security;
+alter table kyc_documents enable row level security;
 alter table developers enable row level security;
 alter table clients enable row level security;
 alter table projects enable row level security;
@@ -301,43 +336,93 @@ alter table communities enable row level security;
 alter table automation_workflows enable row level security;
 alter table intelligent_agents enable row level security;
 
+-- Drop existing policies if they exist (to avoid conflicts)
+drop policy if exists "tenants_select_public" on tenants;
+drop policy if exists "tenant_settings_select_public" on tenant_settings;
+drop policy if exists "app_users_self_select" on app_users;
+drop policy if exists "kyc_profiles_self_select" on kyc_profiles;
+drop policy if exists "kyc_profiles_self_insert" on kyc_profiles;
+drop policy if exists "kyc_profiles_self_update" on kyc_profiles;
+drop policy if exists "kyc_documents_self_select" on kyc_documents;
+drop policy if exists "kyc_documents_self_insert" on kyc_documents;
+drop policy if exists "kyc_documents_service_modify" on kyc_documents;
+drop policy if exists "developers_select_public" on developers;
+drop policy if exists "clients_select_public" on clients;
+drop policy if exists "projects_select_public" on projects;
+drop policy if exists "rounds_select_public" on rounds;
+drop policy if exists "reservations_select_owner" on reservations;
+drop policy if exists "transactions_select_service" on transactions;
+drop policy if exists "research_select_public" on research_items;
+drop policy if exists "price_points_select_public" on price_points;
+drop policy if exists "listings_select_public" on secondary_listings;
+drop policy if exists "trades_select_public" on trades;
+drop policy if exists "documents_select_public" on project_documents;
+drop policy if exists "communities_select_public" on communities;
+drop policy if exists "automations_select_public" on automation_workflows;
+drop policy if exists "agents_select_public" on intelligent_agents;
+drop policy if exists "tenants_modify_service" on tenants;
+drop policy if exists "tenant_settings_modify_service" on tenant_settings;
+drop policy if exists "app_users_modify_service" on app_users;
+drop policy if exists "kyc_profiles_modify_service" on kyc_profiles;
+drop policy if exists "developers_modify_service" on developers;
+drop policy if exists "clients_modify_service" on clients;
+drop policy if exists "projects_modify_service" on projects;
+drop policy if exists "rounds_modify_service" on rounds;
+drop policy if exists "reservations_modify_service" on reservations;
+drop policy if exists "transactions_modify_service" on transactions;
+drop policy if exists "research_modify_service" on research_items;
+drop policy if exists "price_points_modify_service" on price_points;
+drop policy if exists "listings_modify_service" on secondary_listings;
+drop policy if exists "trades_modify_service" on trades;
+drop policy if exists "documents_modify_service" on project_documents;
+drop policy if exists "communities_modify_service" on communities;
+drop policy if exists "automations_modify_service" on automation_workflows;
+drop policy if exists "agents_modify_service" on intelligent_agents;
+
 -- Public read access policies
-create policy if not exists "tenants_select_public" on tenants for select using (true);
-create policy if not exists "tenant_settings_select_public" on tenant_settings for select using (true);
-create policy if not exists "app_users_self_select" on app_users for select using (auth.uid()::text = id or auth.role() = 'service_role' or auth.role() = 'anon');
-create policy if not exists "developers_select_public" on developers for select using (true);
-create policy if not exists "clients_select_public" on clients for select using (auth.role() = 'service_role' or auth.role() = 'authenticated');
-create policy if not exists "projects_select_public" on projects for select using (true);
-create policy if not exists "rounds_select_public" on rounds for select using (true);
-create policy if not exists "reservations_select_owner" on reservations for select using (auth.uid()::text = user_id or auth.role() = 'service_role');
-create policy if not exists "transactions_select_service" on transactions for select using (auth.role() = 'service_role');
-create policy if not exists "research_select_public" on research_items for select using (true);
-create policy if not exists "price_points_select_public" on price_points for select using (true);
-create policy if not exists "listings_select_public" on secondary_listings for select using (true);
-create policy if not exists "trades_select_public" on trades for select using (true);
-create policy if not exists "documents_select_public" on project_documents for select using (true);
-create policy if not exists "communities_select_public" on communities for select using (true);
-create policy if not exists "automations_select_public" on automation_workflows for select using (auth.role() = 'service_role');
-create policy if not exists "agents_select_public" on intelligent_agents for select using (true);
+create policy "tenants_select_public" on tenants for select using (true);
+create policy "tenant_settings_select_public" on tenant_settings for select using (true);
+create policy "app_users_self_select" on app_users for select using (auth.uid()::text = id or auth.role() = 'service_role' or auth.role() = 'anon');
+create policy "kyc_profiles_self_select" on kyc_profiles for select using (auth.uid()::text = user_id or auth.role() = 'service_role');
+create policy "kyc_profiles_self_insert" on kyc_profiles for insert with check (auth.uid()::text = user_id or auth.role() = 'service_role');
+create policy "kyc_profiles_self_update" on kyc_profiles for update using (auth.uid()::text = user_id or auth.role() = 'service_role');
+create policy "kyc_documents_self_select" on kyc_documents for select using (auth.uid()::text = user_id or auth.role() = 'service_role');
+create policy "kyc_documents_self_insert" on kyc_documents for insert with check (auth.uid()::text = user_id or auth.role() = 'service_role');
+create policy "kyc_documents_service_modify" on kyc_documents for all using (auth.role() = 'service_role');
+create policy "developers_select_public" on developers for select using (true);
+create policy "clients_select_public" on clients for select using (auth.role() = 'service_role' or auth.role() = 'authenticated');
+create policy "projects_select_public" on projects for select using (true);
+create policy "rounds_select_public" on rounds for select using (true);
+create policy "reservations_select_owner" on reservations for select using (auth.uid()::text = user_id or auth.role() = 'service_role');
+create policy "transactions_select_service" on transactions for select using (auth.role() = 'service_role');
+create policy "research_select_public" on research_items for select using (true);
+create policy "price_points_select_public" on price_points for select using (true);
+create policy "listings_select_public" on secondary_listings for select using (true);
+create policy "trades_select_public" on trades for select using (true);
+create policy "documents_select_public" on project_documents for select using (true);
+create policy "communities_select_public" on communities for select using (true);
+create policy "automations_select_public" on automation_workflows for select using (auth.role() = 'service_role');
+create policy "agents_select_public" on intelligent_agents for select using (true);
 
 -- Service-role write access
-create policy if not exists "tenants_modify_service" on tenants for all using (auth.role() = 'service_role');
-create policy if not exists "tenant_settings_modify_service" on tenant_settings for all using (auth.role() = 'service_role');
-create policy if not exists "app_users_modify_service" on app_users for all using (auth.role() = 'service_role');
-create policy if not exists "developers_modify_service" on developers for all using (auth.role() = 'service_role');
-create policy if not exists "clients_modify_service" on clients for all using (auth.role() = 'service_role');
-create policy if not exists "projects_modify_service" on projects for all using (auth.role() = 'service_role');
-create policy if not exists "rounds_modify_service" on rounds for all using (auth.role() = 'service_role');
-create policy if not exists "reservations_modify_service" on reservations for all using (auth.role() = 'service_role');
-create policy if not exists "transactions_modify_service" on transactions for all using (auth.role() = 'service_role');
-create policy if not exists "research_modify_service" on research_items for all using (auth.role() = 'service_role');
-create policy if not exists "price_points_modify_service" on price_points for all using (auth.role() = 'service_role');
-create policy if not exists "listings_modify_service" on secondary_listings for all using (auth.role() = 'service_role');
-create policy if not exists "trades_modify_service" on trades for all using (auth.role() = 'service_role');
-create policy if not exists "documents_modify_service" on project_documents for all using (auth.role() = 'service_role');
-create policy if not exists "communities_modify_service" on communities for all using (auth.role() = 'service_role');
-create policy if not exists "automations_modify_service" on automation_workflows for all using (auth.role() = 'service_role');
-create policy if not exists "agents_modify_service" on intelligent_agents for all using (auth.role() = 'service_role');
+create policy "tenants_modify_service" on tenants for all using (auth.role() = 'service_role');
+create policy "tenant_settings_modify_service" on tenant_settings for all using (auth.role() = 'service_role');
+create policy "app_users_modify_service" on app_users for all using (auth.role() = 'service_role');
+create policy "kyc_profiles_modify_service" on kyc_profiles for all using (auth.role() = 'service_role');
+create policy "developers_modify_service" on developers for all using (auth.role() = 'service_role');
+create policy "clients_modify_service" on clients for all using (auth.role() = 'service_role');
+create policy "projects_modify_service" on projects for all using (auth.role() = 'service_role');
+create policy "rounds_modify_service" on rounds for all using (auth.role() = 'service_role');
+create policy "reservations_modify_service" on reservations for all using (auth.role() = 'service_role');
+create policy "transactions_modify_service" on transactions for all using (auth.role() = 'service_role');
+create policy "research_modify_service" on research_items for all using (auth.role() = 'service_role');
+create policy "price_points_modify_service" on price_points for all using (auth.role() = 'service_role');
+create policy "listings_modify_service" on secondary_listings for all using (auth.role() = 'service_role');
+create policy "trades_modify_service" on trades for all using (auth.role() = 'service_role');
+create policy "documents_modify_service" on project_documents for all using (auth.role() = 'service_role');
+create policy "communities_modify_service" on communities for all using (auth.role() = 'service_role');
+create policy "automations_modify_service" on automation_workflows for all using (auth.role() = 'service_role');
+create policy "agents_modify_service" on intelligent_agents for all using (auth.role() = 'service_role');
 
 -- Seed default tenant ----------------------------------------------------
 insert into tenants (id, slug, name, status, metadata)

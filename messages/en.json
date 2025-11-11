@@ -291,7 +291,10 @@
       "last": "Last",
       "first": "First",
       "variation": "Variation",
-      "note": "*Curve updates with secondary market trades (mock)."
+      "note": "*Curve updates with secondary market trades (mock).",
+      "noData": "No data",
+      "range": "Range",
+      "lastPrice": "last"
     },
     "secondary": {
       "noRound": "This project does not have an active round.",
@@ -306,7 +309,9 @@
       "buy": "Buy",
       "invalidData": "Invalid data",
       "listingPublished": "Listing published",
-      "purchaseCompleted": "Purchase completed (simulated)"
+      "purchaseCompleted": "Purchase completed (simulated)",
+      "slotsLabel": "slots",
+      "askPriceLabel": "Ask"
     },
     "timeline": {
       "title": "Milestones",

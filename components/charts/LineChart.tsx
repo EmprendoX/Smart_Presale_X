@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { PricePoint } from "@/lib/types";
 
 export default function LineChart({ data, height = 160 }: { data: PricePoint[]; height?: number }) {
+  const t = useTranslations("project.market");
   const { path, minY, maxY, minX, maxX } = useMemo(() => {
     if (!data?.length) return { path: "", minY: 0, maxY: 0, minX: 0, maxX: 1 };
 
@@ -28,7 +30,7 @@ export default function LineChart({ data, height = 160 }: { data: PricePoint[]; 
     return { path: p, minY, maxY, minX, maxX };
   }, [data, height]);
 
-  if (!data?.length) return <div className="text-sm text-neutral-500">Sin datos</div>;
+  if (!data?.length) return <div className="text-sm text-neutral-500">{t("noData")}</div>;
 
   return (
     <div className="w-full overflow-x-auto">
@@ -36,7 +38,7 @@ export default function LineChart({ data, height = 160 }: { data: PricePoint[]; 
         <path d={path} fill="none" stroke="currentColor" strokeWidth={2} className="text-brand" />
       </svg>
       <div className="mt-2 text-xs text-neutral-600">
-        Rango: {minY.toFixed(2)} – {maxY.toFixed(2)} (último: {data[data.length - 1].price.toFixed(2)})
+        {t("range")}: {minY.toFixed(2)} – {maxY.toFixed(2)} ({t("lastPrice")}: {data[data.length - 1].price.toFixed(2)})
       </div>
     </div>
   );

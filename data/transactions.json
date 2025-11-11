@@ -38,5 +38,13 @@
     "amount": 500,
     "currency": "USD",
     "status": "succeeded"
+  },
+  {
+    "id": "tx_zvrqb2eh",
+    "reservationId": "74a19cdd-6eab-4ab2-b774-952189bc46b6",
+    "provider": "simulated",
+    "amount": 500,
+    "currency": "USD",
+    "status": "succeeded"
   }
 ]

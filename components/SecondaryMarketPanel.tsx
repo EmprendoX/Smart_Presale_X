@@ -131,7 +131,7 @@ export default function SecondaryMarketPanel({
           {active.map(l => (
             <div key={l.id} className="flex items-center justify-between rounded-md border p-3">
               <div className="text-sm">
-                #{l.id.slice(0,6)} • {l.slots} slots • Ask: <b>{fmtCurrency(l.ask, l.currency, locale)}</b>
+                #{l.id.slice(0,6)} • {l.slots} {t("slotsLabel")} • {t("askPriceLabel")}: <b>{fmtCurrency(l.ask, l.currency, locale)}</b>
               </div>
               <Button onClick={() => buy(l.id)} size="sm">{t("buy")}</Button>
             </div>

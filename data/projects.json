@@ -104,5 +104,93 @@
       "floors": 4
     },
     "tenantId": "tenant_default"
+  },
+  {
+    "id": "e9f422ca-ce2c-4d8b-8785-b64f638ce105",
+    "slug": "apartment-playa-nueva-romana",
+    "name": "apartment playa nueva romana",
+    "city": "republica dominicana",
+    "country": "dominican republic",
+    "currency": "USD",
+    "status": "published",
+    "images": [
+      "/uploads/1762805620524-sqobi13fd2n.png",
+      "/uploads/1762805825703-plptbfrf87e.png",
+      "/uploads/1762805839825-g3ehj9nkmq6.png",
+      "/uploads/1762805849026-fqmz7e1zmwm.png"
+    ],
+    "videoUrl": "https://youtu.be/ImsOkl7kfwc?si=BBlJD6JnF6TEsfLY",
+    "description": "hhhhhh",
+    "developerId": "d1",
+    "createdAt": "2025-11-10T20:17:37.913Z",
+    "ticker": "SPS:APART",
+    "totalUnits": 120,
+    "propertyType": "Condominios",
+    "propertyPrice": 243000,
+    "developmentStage": "Preventa",
+    "propertyDetails": {
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "halfBathrooms": 1,
+      "surfaceArea": 120,
+      "parkingSpaces": 2,
+      "floors": 4
+    },
+    "listingType": "sale",
+    "stage": "Preventa",
+    "availabilityStatus": "available",
+    "askingPrice": 243000,
+    "featured": false,
+    "automationReady": true,
+    "tenantId": "tenant_default"
+  },
+  {
+    "id": "2bb96a6b-6360-45d5-bf72-fb7909bd364b",
+    "slug": "land-new-construccion-villa-playa-nueva-romana",
+    "name": "Land New Construccion Villa Playa Nueva Romana",
+    "city": "Dominican Republic",
+    "country": "DR",
+    "currency": "USD",
+    "status": "published",
+    "images": [
+      "/uploads/1762806572925-vkwd4pijxk.png",
+      "/uploads/1762806578777-75i0f5uvj5j.png",
+      "/uploads/1762806586050-dmud7wk0q2w.png"
+    ],
+    "videoUrl": "https://youtu.be/ImsOkl7kfwc?si=4JQico_TYim3l87u",
+    "description": "Confort, lujo y comodidad\n\nEstas exclusivas villas son una mezcla de confort, lujo y comodidad en un área de ensueño para el disfrute de la vida caribeña en todo su esplendor con espacios que reflejan paz y tranquilidad.\n\nEstas espectaculares villas son la oportunidad perfecta para invertir o vivir un placentero estilo de vida. Arquitectura única, interior sofisticado y acogedores espacios para disfrutar y vivir momentos únicos con sus seres queridos.",
+    "developerId": "d1",
+    "createdAt": "2025-11-10T20:37:37.729Z",
+    "ticker": "SPS:LAND-",
+    "totalUnits": 120,
+    "zone": {
+      "golf": [
+        "Night Golf 9 Holes",
+        "PGE Beach Golf Corse 18 Holes",
+        "Mini Golf"
+      ],
+      "retail": [
+        "Shop Center",
+        "Super Market"
+      ],
+      "summary": "Inside Gated Community "
+    },
+    "propertyType": "Villa",
+    "propertyPrice": 650000,
+    "developmentStage": "Pre-construcción",
+    "propertyDetails": {
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "halfBathrooms": 1,
+      "surfaceArea": 200,
+      "parkingSpaces": 2,
+      "floors": 2
+    },
+    "listingType": "presale",
+    "stage": "Pre-construcción",
+    "availabilityStatus": "coming_soon",
+    "featured": false,
+    "automationReady": true,
+    "tenantId": "tenant_default"
   }
 ]
