@@ -39,7 +39,73 @@
     "howItWorks": "Cómo funciona",
     "language": "Idioma",
     "spanish": "Español",
-    "english": "English"
+    "english": "English",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "roles": {
+      "buyer": "Comprador",
+      "developer": "Desarrollador",
+      "admin": "Admin"
+    },
+    "kyc": {
+      "none": "KYC pendiente",
+      "basic": "Datos capturados",
+      "verified": "Verificado"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Crea tu cuenta Smart Presale",
+      "subtitle": "Recibe un enlace seguro o usa tu red social favorita.",
+      "emailTitle": "Acceso con correo",
+      "emailDescription": "Te enviaremos un enlace mágico (OTP) para validar tu correo.",
+      "emailLabel": "Correo electrónico",
+      "sendOtp": "Enviar enlace de acceso",
+      "sending": "Enviando...",
+      "otpSent": "Te enviamos un correo con tu enlace de acceso.",
+      "genericError": "Ocurrió un error. Inténtalo de nuevo.",
+      "oauthTitle": "Redes sociales",
+      "oauthDescription": "Conecta una de tus cuentas existentes para empezar.",
+      "continueWith": "Continuar con {provider}"
+    },
+    "kyc": {
+      "title": "Verifica tu identidad",
+      "subtitle": "Hola {name}, necesitamos confirmar tu información para activar tus reservas.",
+      "steps": {
+        "personal": "Datos personales",
+        "personalHint": "Nombre completo, contacto y domicilio.",
+        "documents": "Documentos",
+        "documentsHint": "Identificación y comprobante de domicilio."
+      },
+      "personalTitle": "Captura tus datos personales",
+      "documentsTitle": "Sube tus documentos",
+      "fields": {
+        "firstName": "Nombre(s)",
+        "lastName": "Apellidos",
+        "birthdate": "Fecha de nacimiento",
+        "country": "País",
+        "phone": "Teléfono",
+        "city": "Ciudad",
+        "addressLine1": "Dirección",
+        "addressLine2": "Departamento, interior (opcional)",
+        "state": "Estado / Provincia",
+        "postalCode": "Código postal"
+      },
+      "documents": {
+        "id_front": "Identificación oficial (frente)",
+        "id_back": "Identificación oficial (reverso)",
+        "proof_of_address": "Comprobante de domicilio"
+      },
+      "continue": "Continuar",
+      "submitDocuments": "Enviar documentos",
+      "saving": "Guardando...",
+      "personalSuccess": "Guardamos tus datos. Ahora sube tus documentos.",
+      "documentsSuccess": "Recibimos tus documentos. Te avisaremos cuando estén verificados.",
+      "missingDocuments": "Sube al menos un documento para continuar.",
+      "genericError": "Ocurrió un error. Inténtalo más tarde.",
+      "noUserTitle": "Necesitas iniciar sesión",
+      "noUserDescription": "Crea una cuenta o inicia sesión para completar tu verificación."
+    }
   },
   "home": {
     "seo": {

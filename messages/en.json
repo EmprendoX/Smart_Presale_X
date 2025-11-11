@@ -39,7 +39,73 @@
     "howItWorks": "How it works",
     "language": "Language",
     "spanish": "Español",
-    "english": "English"
+    "english": "English",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "roles": {
+      "buyer": "Buyer",
+      "developer": "Developer",
+      "admin": "Admin"
+    },
+    "kyc": {
+      "none": "KYC pending",
+      "basic": "Details captured",
+      "verified": "Verified"
+    }
+  },
+  "auth": {
+    "signUp": {
+      "title": "Create your Smart Presale account",
+      "subtitle": "Get a secure magic link or continue with your favourite network.",
+      "emailTitle": "Email access",
+      "emailDescription": "We will send you a one-time passcode (OTP) to verify your email.",
+      "emailLabel": "Email",
+      "sendOtp": "Send access link",
+      "sending": "Sending...",
+      "otpSent": "Check your inbox for the access link.",
+      "genericError": "Something went wrong. Try again.",
+      "oauthTitle": "Social login",
+      "oauthDescription": "Use an existing account to get started faster.",
+      "continueWith": "Continue with {provider}"
+    },
+    "kyc": {
+      "title": "Verify your identity",
+      "subtitle": "Hi {name}, we need to confirm your details before enabling reservations.",
+      "steps": {
+        "personal": "Personal details",
+        "personalHint": "Full name, contact info and address.",
+        "documents": "Documents",
+        "documentsHint": "Government ID and proof of address."
+      },
+      "personalTitle": "Enter your personal information",
+      "documentsTitle": "Upload your documents",
+      "fields": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "birthdate": "Birth date",
+        "country": "Country",
+        "phone": "Phone",
+        "city": "City",
+        "addressLine1": "Address",
+        "addressLine2": "Apartment, suite (optional)",
+        "state": "State / Province",
+        "postalCode": "Postal code"
+      },
+      "documents": {
+        "id_front": "Government ID (front)",
+        "id_back": "Government ID (back)",
+        "proof_of_address": "Proof of address"
+      },
+      "continue": "Continue",
+      "submitDocuments": "Submit documents",
+      "saving": "Saving...",
+      "personalSuccess": "Personal data saved. Upload your documents next.",
+      "documentsSuccess": "Documents received. We will notify you once they are verified.",
+      "missingDocuments": "Upload at least one document to continue.",
+      "genericError": "Something went wrong. Please try later.",
+      "noUserTitle": "You need to sign in",
+      "noUserDescription": "Create an account or sign in to complete your verification."
+    }
   },
   "home": {
     "seo": {

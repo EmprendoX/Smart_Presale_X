@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Navbar } from "@/components/Navbar";
 import { ToastProvider } from "@/components/ui/Toast";
+import { AuthProvider } from "@/providers/AuthProvider";
 import "../globals.css";
 
 // Mensajes por defecto como fallback
@@ -62,10 +63,12 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ToastProvider>
-            <Navbar />
-            <main className="container py-8">{children}</main>
-          </ToastProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <Navbar />
+              <main className="container py-8">{children}</main>
+            </ToastProvider>
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

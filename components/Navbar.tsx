@@ -5,18 +5,11 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Select } from "./ui/Select";
 import { Button } from "./ui/Button";
-
-type DemoUser = { id: string; name: string; role: "buyer" | "developer" | "admin"; kycStatus: "none" | "basic" | "verified" };
-
-const DEMO_USERS: DemoUser[] = [
-  { id: "u_buyer_1", name: "Ana (Comprador)", role: "buyer", kycStatus: "basic" },
-  { id: "u_dev_1", name: "Carlos (Dev)", role: "developer", kycStatus: "verified" },
-  { id: "u_admin_1", name: "Pat (Admin)", role: "admin", kycStatus: "verified" }
-];
+import { useAuth } from "@/providers/AuthProvider";
 
 export function Navbar() {
   const [mounted, setMounted] = useState(false);
-  const [user, setUser] = useState<DemoUser>(DEMO_USERS[0]);
+  const { user, loading, signOut } = useAuth();
   
   // Hooks de next-intl con manejo de errores
   let t: ReturnType<typeof useTranslations>;
@@ -44,19 +37,6 @@ export function Navbar() {
   // Solo usar localStorage después de montar (cliente)
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== "undefined") {
-      try {
-        const raw = localStorage.getItem("sps_user");
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          setUser(parsed);
-        } else {
-          localStorage.setItem("sps_user", JSON.stringify(DEMO_USERS[0]));
-        }
-      } catch (error) {
-        console.error("Error leyendo localStorage:", error);
-      }
-    }
   }, []);
 
   // Prevenir loops infinitos en cambio de locale
@@ -75,20 +55,6 @@ export function Navbar() {
       console.error("Error en cambio de locale:", error);
     }
   }, [mounted, locale, pathname, router]);
-
-  const onChange = (id: string) => {
-    const u = DEMO_USERS.find(x => x.id === id);
-    if (u) {
-      setUser(u);
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem("sps_user", JSON.stringify(u));
-        } catch (error) {
-          console.error("Error guardando usuario:", error);
-        }
-      }
-    }
-  };
 
   const changeLanguage = (newLocale: string) => {
     if (typeof window !== "undefined" && (newLocale === "es" || newLocale === "en")) {
@@ -123,11 +89,25 @@ export function Navbar() {
             <option value="es">{t("spanish")}</option>
             <option value="en">{t("english")}</option>
           </Select>
-          <Select value={user.id} onChange={e => onChange(e.target.value)} aria-label="Usuario demo">
-            {DEMO_USERS.map(u => (
-              <option key={u.id} value={u.id}>{u.name}</option>
-            ))}
-          </Select>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-neutral-600">
+                <p className="font-medium text-neutral-900">{user.fullName || user.email}</p>
+                <p className="text-xs capitalize text-neutral-500">
+                  {t(`roles.${user.role}` as any)} · {t(`kyc.${user.kycStatus}` as any)}
+                </p>
+              </div>
+              <Button variant="secondary" onClick={() => signOut().catch(error => console.error('Error al cerrar sesión:', error))}>
+                {t("signOut")}
+              </Button>
+            </div>
+          ) : (
+            !loading && (
+              <Button variant="secondary" asChild>
+                <Link href="/sign-up">{t("signIn")}</Link>
+              </Button>
+            )
+          )}
           <Button variant="secondary" asChild>
             <a href="https://example.com/how-it-works" target="_blank" rel="noreferrer">{t("howItWorks")}</a>
           </Button>
