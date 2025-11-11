@@ -394,6 +394,7 @@ const initializeDefaultData = async () => {
         name: "Comunidad Global Smart Presale",
         description: "Espacio para inversionistas y desarrolladores con acceso a masterclasses, lanzamientos y playbooks.",
         scope: "global",
+        tenantId: "tenant_default",
         coverImage: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop",
         tags: ["networking", "educación", "automatización"],
         memberCount: 428,
@@ -405,7 +406,48 @@ const initializeDefaultData = async () => {
             author: "Equipo Smart Presale",
             publishedAt: nowISO()
           }
-        ]
+        ],
+        moderators: ["Pat Admin", "Luna Concierge IA"],
+        threads: [
+          {
+            id: "thread-intro",
+            title: "Presentaciones y objetivos de inversión",
+            author: "Pat Admin",
+            replies: 42,
+            lastActivityAt: nowISO(),
+            status: "approved",
+            tags: ["onboarding", "recursos"]
+          },
+          {
+            id: "thread-alerta",
+            title: "Alerta macro: impacto del tipo de cambio",
+            author: "Atlas Analyst",
+            replies: 18,
+            lastActivityAt: nowISO(),
+            status: "pending",
+            tags: ["analisis", "riesgos"]
+          }
+        ],
+        badges: [
+          {
+            id: "badge-closer",
+            label: "Closer",
+            description: "3 reservas confirmadas en los últimos 90 días",
+            criteria: "closed_won>=3"
+          },
+          {
+            id: "badge-mentor",
+            label: "Mentor",
+            description: "Ha respondido 10 hilos como experto",
+            criteria: "answers>=10"
+          }
+        ],
+        notificationChannels: [
+          { channel: "push", enabled: true, lastTriggeredAt: nowISO() },
+          { channel: "email", enabled: true, lastTriggeredAt: nowISO() },
+          { channel: "slack", enabled: false }
+        ],
+        pushTopic: "global-community"
       },
       {
         id: "comm-p1",
@@ -413,6 +455,7 @@ const initializeDefaultData = async () => {
         name: "Residencial Arrecife · Comunidad Preventa",
         description: "Actualizaciones constructivas, comparables de mercado y coordinación de visitas para compradores.",
         scope: "campaign",
+        tenantId: "tenant_default",
         projectId: "p1",
         roundId: "r1",
         coverImage: "https://images.unsplash.com/photo-1505843866550-141cc6f3d9d8?q=80&w=1600&auto=format&fit=crop",
@@ -426,7 +469,56 @@ const initializeDefaultData = async () => {
             author: "Luna Concierge IA",
             publishedAt: nowISO()
           }
-        ]
+        ],
+        moderators: ["Luna Concierge IA"],
+        threads: [
+          {
+            id: "thread-visita",
+            title: "Coordinación de visitas virtuales",
+            author: "Luna Concierge IA",
+            replies: 12,
+            lastActivityAt: nowISO(),
+            status: "approved",
+            tags: ["visitas", "ventas"]
+          },
+          {
+            id: "thread-avance",
+            title: "Reporte de obra semanal",
+            author: "Carlos Dev",
+            replies: 5,
+            lastActivityAt: nowISO(),
+            status: "approved",
+            tags: ["obra", "seguimiento"]
+          },
+          {
+            id: "thread-duda",
+            title: "¿Proceso para firmar en remoto?",
+            author: "Ana Compradora",
+            replies: 4,
+            lastActivityAt: nowISO(),
+            status: "flagged",
+            tags: ["firmas", "soporte"]
+          }
+        ],
+        badges: [
+          {
+            id: "badge-visitante",
+            label: "Visitante VIP",
+            description: "Agenda 2 recorridos en un mes",
+            criteria: "visits>=2"
+          },
+          {
+            id: "badge-champion",
+            label: "Champion",
+            description: "Comparte feedback mensual",
+            criteria: "posts>=4"
+          }
+        ],
+        notificationChannels: [
+          { channel: "push", enabled: true, lastTriggeredAt: nowISO() },
+          { channel: "email", enabled: true, lastTriggeredAt: nowISO() }
+        ],
+        pushTopic: "project-p1"
       },
       {
         id: "comm-p3",
@@ -434,6 +526,7 @@ const initializeDefaultData = async () => {
         name: "Villa Aurora · Comunidad Propietarios",
         description: "Foro privado para residentes y prospectos con acceso a automatizaciones de mantenimiento y concierge.",
         scope: "campaign",
+        tenantId: "tenant_default",
         projectId: "p3",
         memberCount: 54,
         coverImage: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1600&auto=format&fit=crop",
@@ -446,7 +539,41 @@ const initializeDefaultData = async () => {
             author: "Rhea Broker",
             publishedAt: nowISO()
           }
-        ]
+        ],
+        moderators: ["Rhea Broker"],
+        threads: [
+          {
+            id: "thread-mantenimiento",
+            title: "Checklist de mantenimiento trimestral",
+            author: "Rhea Broker",
+            replies: 8,
+            lastActivityAt: nowISO(),
+            status: "approved",
+            tags: ["mantenimiento"]
+          },
+          {
+            id: "thread-beneficios",
+            title: "Beneficios concierge verano",
+            author: "Luna Concierge IA",
+            replies: 9,
+            lastActivityAt: nowISO(),
+            status: "pending",
+            tags: ["concierge", "beneficios"]
+          }
+        ],
+        badges: [
+          {
+            id: "badge-hospitable",
+            label: "Anfitrión",
+            description: "Comparte reseñas verificadas con prospectos",
+            criteria: "reviews>=3"
+          }
+        ],
+        notificationChannels: [
+          { channel: "push", enabled: true, lastTriggeredAt: nowISO() },
+          { channel: "email", enabled: false }
+        ],
+        pushTopic: "project-p3"
       }
     ];
 
