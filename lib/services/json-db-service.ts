@@ -16,7 +16,8 @@ import {
   Developer,
   Tenant,
   Client,
-  TenantBranding
+  TenantBranding,
+  PaymentWebhook
 } from '../types';
 import { jsonDb } from '../storage/json-db';
 
@@ -178,6 +179,23 @@ export class JsonDbService implements DatabaseService {
 
   async updateTransaction(id: string, updates: Partial<Transaction>): Promise<Transaction | null> {
     return jsonDb.updateTransaction(id, updates);
+  }
+
+  // Payment webhooks
+  async getPaymentWebhooks(): Promise<PaymentWebhook[]> {
+    return jsonDb.getPaymentWebhooks();
+  }
+
+  async getPaymentWebhookById(id: string): Promise<PaymentWebhook | null> {
+    return jsonDb.getPaymentWebhookById(id);
+  }
+
+  async createPaymentWebhook(event: PaymentWebhook): Promise<PaymentWebhook> {
+    return jsonDb.createPaymentWebhook(event);
+  }
+
+  async updatePaymentWebhook(id: string, updates: Partial<PaymentWebhook>): Promise<PaymentWebhook | null> {
+    return jsonDb.updatePaymentWebhook(id, updates);
   }
 
   // Research

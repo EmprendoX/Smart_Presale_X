@@ -889,6 +889,11 @@ export default function Admin() {
         <h1 className="text-3xl font-semibold">{t("title")}</h1>
         <p className="text-sm text-neutral-600">{t("subtitle")}</p>
       </div>
+      <div className="flex justify-end">
+        <Button variant="secondary" asChild>
+          <Link href="/admin/payouts">{t("openPayouts")}</Link>
+        </Button>
+      </div>
       <Tabs
         tabs={[
           { key: "projects", label: t("tabs.projects"), content: projectTab },

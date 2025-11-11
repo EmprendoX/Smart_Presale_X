@@ -592,6 +592,7 @@
     "slots": "slots",
     "downloadIcs": "Descargar .ics",
     "viewProject": "Ver proyecto →",
+    "openPayouts": "Ver conciliaciones",
     "noRound": "Este proyecto no tiene una ronda asociada. El desarrollador debe crear una ronda.",
     "reservations": "reservas",
     "automations": {
@@ -693,6 +694,35 @@
       "loadError": "Error al cargar proyectos"
     }
   },
+  "adminPayouts": {
+    "metaTitle": "Conciliación de fondos · Admin",
+    "metaDescription": "Audita reservas, pagos y reembolsos en todas las rondas.",
+    "title": "Conciliación de fondos",
+    "subtitle": "Descarga reportes listos para compartir con depósitos, pagos y reembolsos.",
+    "downloadCsv": "Descargar reporte CSV",
+    "summaryTitle": "Resumen",
+    "summary": {
+      "totalVolume": "Volumen total",
+      "succeeded": "Confirmados",
+      "refunded": "Reembolsados"
+    },
+    "table": {
+      "transaction": "Transacción",
+      "project": "Proyecto",
+      "round": "Ronda",
+      "amount": "Monto",
+      "status": "Estado",
+      "provider": "Proveedor",
+      "payoutAt": "Pago en"
+    },
+    "statuses": {
+      "pending": "Pendiente",
+      "succeeded": "Confirmada",
+      "refunded": "Reembolsada"
+    },
+    "empty": "Aún no hay transacciones.",
+    "unknownProject": "Proyecto desconocido"
+  },
   "forms": {
     "required": "Este campo es requerido",
     "invalidEmail": "Email inválido",
@@ -710,7 +740,11 @@
     "deleteSuccess": "Eliminado exitosamente",
     "deleteError": "Error al eliminar",
     "updateSuccess": "Actualizado exitosamente",
-    "updateError": "Error al actualizar"
+    "updateError": "Error al actualizar",
+    "paymentInitiated": "Pago iniciado",
+    "paymentPending": "Pago pendiente de confirmación",
+    "paymentActionRequired": "Se requiere una acción adicional",
+    "paymentWaitlisted": "Agregado a la lista de espera"
   },
   "status": {
     "pending": "Pendiente",

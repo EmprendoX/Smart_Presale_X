@@ -18,7 +18,8 @@ import {
   Developer,
   Tenant,
   TenantBranding,
-  Client
+  Client,
+  PaymentWebhook
 } from '../types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -82,6 +83,8 @@ const defaultClients: Client[] = [
     updatedAt: nowISO()
   }
 ];
+
+const defaultPaymentWebhooks: PaymentWebhook[] = [];
 
 // Asegurar que el directorio data existe
 const ensureDataDir = async () => {
@@ -457,6 +460,41 @@ export const jsonDb = {
     transactions[index] = { ...transactions[index], ...updates };
     await this.saveTransactions(transactions);
     return transactions[index];
+  },
+
+  // Payment webhooks
+  async getPaymentWebhooks(): Promise<PaymentWebhook[]> {
+    return readJson<PaymentWebhook>('payment-webhooks.json', defaultPaymentWebhooks);
+  },
+
+  async savePaymentWebhooks(events: PaymentWebhook[]): Promise<void> {
+    return writeJson('payment-webhooks.json', events);
+  },
+
+  async getPaymentWebhookById(id: string): Promise<PaymentWebhook | null> {
+    const events = await this.getPaymentWebhooks();
+    return events.find(event => event.id === id) ?? null;
+  },
+
+  async createPaymentWebhook(event: PaymentWebhook): Promise<PaymentWebhook> {
+    const events = await this.getPaymentWebhooks();
+    const index = events.findIndex(e => e.id === event.id);
+    if (index >= 0) {
+      events[index] = { ...events[index], ...event };
+    } else {
+      events.push(event);
+    }
+    await this.savePaymentWebhooks(events);
+    return event;
+  },
+
+  async updatePaymentWebhook(id: string, updates: Partial<PaymentWebhook>): Promise<PaymentWebhook | null> {
+    const events = await this.getPaymentWebhooks();
+    const index = events.findIndex(event => event.id === id);
+    if (index === -1) return null;
+    events[index] = { ...events[index], ...updates } as PaymentWebhook;
+    await this.savePaymentWebhooks(events);
+    return events[index];
   },
 
   // Research

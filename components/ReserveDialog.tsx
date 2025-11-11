@@ -45,11 +45,25 @@ export default function ReserveDialog({ project, round }: { project: Project; ro
 
       if (!res.ok) throw new Error(res.error);
 
-      // Pago simulado
       const ok = await api.checkout(res.data.id);
       if (!ok.ok) throw new Error(ok.error);
 
-      show(tMessages("success"), tMessages("success"));
+      const payment = ok.data;
+      const titleKey = payment.reservationStatus === "waitlisted"
+        ? "paymentWaitlisted"
+        : payment.nextAction
+          ? "paymentActionRequired"
+          : payment.reservationStatus === "confirmed"
+            ? "paymentInitiated"
+            : "paymentPending";
+
+      const descriptionKey = payment.reservationStatus === "confirmed" && !payment.nextAction
+        ? "success"
+        : payment.nextAction
+          ? "paymentActionRequired"
+          : "paymentPending";
+
+      show(tMessages(titleKey), tMessages(descriptionKey));
       setOpen(false);
     } catch (e: any) {
       show(e.message || tMessages("error"), tMessages("error"));
