@@ -134,7 +134,23 @@ create table if not exists transactions (
   currency text not null check (currency in ('USD','MXN')),
   status text not null check (status in ('pending','succeeded','refunded')),
   payout_at timestamptz,
+  provider_reference text,
+  metadata jsonb default '{}'::jsonb,
+  raw_response jsonb,
+  client_secret text,
   created_at timestamptz not null default now()
+);
+
+create table if not exists payment_webhooks (
+  id text primary key,
+  provider text not null check (provider in ('simulated','stripe','escrow')),
+  event_type text not null,
+  payload jsonb not null,
+  reservation_id uuid references reservations(id) on delete set null,
+  transaction_id uuid references transactions(id) on delete set null,
+  processed_at timestamptz,
+  received_at timestamptz not null default now(),
+  status text default 'pending'
 );
 
 -- Research & market data -------------------------------------------------

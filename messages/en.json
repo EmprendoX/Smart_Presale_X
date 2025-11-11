@@ -592,6 +592,7 @@
     "slots": "slots",
     "downloadIcs": "Download .ics",
     "viewProject": "View project →",
+    "openPayouts": "View payouts",
     "noRound": "This project does not have an associated round. The developer must create a round.",
     "reservations": "reservations",
     "automations": {
@@ -693,6 +694,35 @@
       "loadError": "Error loading projects"
     }
   },
+  "adminPayouts": {
+    "metaTitle": "Funds reconciliation · Admin",
+    "metaDescription": "Audit reservations, payouts and refunds across every round.",
+    "title": "Funds reconciliation",
+    "subtitle": "Download ready-to-share reports with reservation deposits, payouts and refunds.",
+    "downloadCsv": "Download CSV report",
+    "summaryTitle": "Summary",
+    "summary": {
+      "totalVolume": "Total volume",
+      "succeeded": "Confirmed",
+      "refunded": "Refunded"
+    },
+    "table": {
+      "transaction": "Transaction",
+      "project": "Project",
+      "round": "Round",
+      "amount": "Amount",
+      "status": "Status",
+      "provider": "Provider",
+      "payoutAt": "Payout at"
+    },
+    "statuses": {
+      "pending": "Pending",
+      "succeeded": "Succeeded",
+      "refunded": "Refunded"
+    },
+    "empty": "No transactions yet.",
+    "unknownProject": "Unknown project"
+  },
   "forms": {
     "required": "This field is required",
     "invalidEmail": "Invalid email",
@@ -710,7 +740,11 @@
     "deleteSuccess": "Deleted successfully",
     "deleteError": "Error deleting",
     "updateSuccess": "Updated successfully",
-    "updateError": "Error updating"
+    "updateError": "Error updating",
+    "paymentInitiated": "Payment initiated",
+    "paymentPending": "Payment pending confirmation",
+    "paymentActionRequired": "Additional action required",
+    "paymentWaitlisted": "Added to waitlist"
   },
   "status": {
     "pending": "Pending",

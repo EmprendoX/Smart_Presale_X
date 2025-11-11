@@ -175,6 +175,35 @@ export type Transaction = {
   currency: Currency;
   status: "pending" | "succeeded" | "refunded";
   payoutAt?: string | null;
+  externalId?: string | null;
+  metadata?: Record<string, any> | null;
+  rawResponse?: Record<string, any> | null;
+  clientSecret?: string | null;
+  createdAt?: string;
+};
+
+export type PaymentWebhook = {
+  id: string;
+  provider: TransactionProvider;
+  eventType: string;
+  payload: Record<string, any>;
+  reservationId?: string | null;
+  transactionId?: string | null;
+  processedAt?: string | null;
+  receivedAt: string;
+  status?: "pending" | "processed" | "ignored";
+};
+
+export type PayoutReportRow = {
+  transactionId: string;
+  reservationId: string;
+  projectId: string;
+  roundId: string;
+  amount: number;
+  currency: Currency;
+  status: Transaction["status"];
+  payoutAt?: string | null;
+  provider: TransactionProvider;
 };
 
 export type DocumentType = "title" | "permit" | "terms";

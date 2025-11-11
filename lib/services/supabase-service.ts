@@ -17,7 +17,8 @@ import type {
   Developer,
   Tenant,
   TenantBranding,
-  Client
+  Client,
+  PaymentWebhook
 } from '../types';
 
 type TableName =
@@ -25,6 +26,7 @@ type TableName =
   | 'rounds'
   | 'reservations'
   | 'transactions'
+  | 'payment_webhooks'
   | 'research_items'
   | 'price_points'
   | 'secondary_listings'
@@ -427,6 +429,10 @@ type TransactionRow = {
   status: string;
   payout_at: string | null;
   created_at: string;
+  provider_reference: string | null;
+  metadata: any;
+  raw_response: any;
+  client_secret: string | null;
 };
 
 const mapTransactionFromRow = (row: TransactionRow): Transaction => ({
@@ -436,7 +442,12 @@ const mapTransactionFromRow = (row: TransactionRow): Transaction => ({
   amount: row.amount,
   currency: row.currency as Transaction['currency'],
   status: row.status as Transaction['status'],
-  payoutAt: row.payout_at ? parseDate(row.payout_at) ?? null : null
+  payoutAt: row.payout_at ? parseDate(row.payout_at) ?? null : null,
+  externalId: row.provider_reference ?? undefined,
+  metadata: row.metadata ?? undefined,
+  rawResponse: row.raw_response ?? undefined,
+  clientSecret: row.client_secret ?? undefined,
+  createdAt: parseDate(row.created_at)
 });
 
 const mapTransactionToRow = (transaction: Transaction): TransactionRow => ({
@@ -447,7 +458,11 @@ const mapTransactionToRow = (transaction: Transaction): TransactionRow => ({
   currency: transaction.currency,
   status: transaction.status,
   payout_at: transaction.payoutAt ?? null,
-  created_at: new Date().toISOString()
+  created_at: transaction.createdAt ?? new Date().toISOString(),
+  provider_reference: transaction.externalId ?? null,
+  metadata: transaction.metadata ?? {},
+  raw_response: transaction.rawResponse ?? null,
+  client_secret: transaction.clientSecret ?? null
 });
 
 const mapTransactionUpdatesToRow = (updates: Partial<Transaction>): Partial<TransactionRow> => {
@@ -469,6 +484,83 @@ const mapTransactionUpdatesToRow = (updates: Partial<Transaction>): Partial<Tran
   }
   if (Object.prototype.hasOwnProperty.call(updates, 'payoutAt')) {
     payload.payout_at = updates.payoutAt ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'externalId')) {
+    payload.provider_reference = updates.externalId ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'metadata')) {
+    payload.metadata = updates.metadata ?? {};
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'rawResponse')) {
+    payload.raw_response = updates.rawResponse ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'clientSecret')) {
+    payload.client_secret = updates.clientSecret ?? null;
+  }
+  return payload;
+};
+
+type PaymentWebhookRow = {
+  id: string;
+  provider: string;
+  event_type: string;
+  payload: any;
+  reservation_id: string | null;
+  transaction_id: string | null;
+  processed_at: string | null;
+  received_at: string;
+  status: string | null;
+};
+
+const mapPaymentWebhookFromRow = (row: PaymentWebhookRow): PaymentWebhook => ({
+  id: row.id,
+  provider: row.provider as PaymentWebhook['provider'],
+  eventType: row.event_type,
+  payload: row.payload ?? {},
+  reservationId: row.reservation_id ?? undefined,
+  transactionId: row.transaction_id ?? undefined,
+  processedAt: row.processed_at ? parseDate(row.processed_at) ?? null : null,
+  receivedAt: parseDate(row.received_at) ?? new Date().toISOString(),
+  status: (row.status as PaymentWebhook['status']) ?? undefined
+});
+
+const mapPaymentWebhookToRow = (event: PaymentWebhook): PaymentWebhookRow => ({
+  id: event.id,
+  provider: event.provider,
+  event_type: event.eventType,
+  payload: event.payload,
+  reservation_id: event.reservationId ?? null,
+  transaction_id: event.transactionId ?? null,
+  processed_at: event.processedAt ?? null,
+  received_at: event.receivedAt,
+  status: event.status ?? null
+});
+
+const mapPaymentWebhookUpdatesToRow = (updates: Partial<PaymentWebhook>): Partial<PaymentWebhookRow> => {
+  const payload: Partial<PaymentWebhookRow> = {};
+  if (Object.prototype.hasOwnProperty.call(updates, 'provider') && updates.provider !== undefined) {
+    payload.provider = updates.provider;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'eventType') && updates.eventType !== undefined) {
+    payload.event_type = updates.eventType;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'payload') && updates.payload !== undefined) {
+    payload.payload = updates.payload;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'reservationId')) {
+    payload.reservation_id = updates.reservationId ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'transactionId')) {
+    payload.transaction_id = updates.transactionId ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'processedAt')) {
+    payload.processed_at = updates.processedAt ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'receivedAt') && updates.receivedAt !== undefined) {
+    payload.received_at = updates.receivedAt;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, 'status')) {
+    payload.status = updates.status ?? null;
   }
   return payload;
 };
@@ -1542,6 +1634,32 @@ export class SupabaseService implements DatabaseService {
       id,
       mapTransactionUpdatesToRow(updates),
       mapTransactionFromRow
+    );
+  }
+
+  // ===== Payment Webhooks =====
+  async getPaymentWebhooks(): Promise<PaymentWebhook[]> {
+    return this.selectAll<PaymentWebhookRow, PaymentWebhook>('payment_webhooks', mapPaymentWebhookFromRow);
+  }
+
+  async getPaymentWebhookById(id: string): Promise<PaymentWebhook | null> {
+    return this.selectSingle<PaymentWebhookRow, PaymentWebhook>('payment_webhooks', 'id', id, mapPaymentWebhookFromRow);
+  }
+
+  async createPaymentWebhook(event: PaymentWebhook): Promise<PaymentWebhook> {
+    return this.insertSingle<PaymentWebhookRow, PaymentWebhook>(
+      'payment_webhooks',
+      mapPaymentWebhookToRow(event),
+      mapPaymentWebhookFromRow
+    );
+  }
+
+  async updatePaymentWebhook(id: string, updates: Partial<PaymentWebhook>): Promise<PaymentWebhook | null> {
+    return this.updateSingle<PaymentWebhookRow, PaymentWebhook>(
+      'payment_webhooks',
+      id,
+      mapPaymentWebhookUpdatesToRow(updates),
+      mapPaymentWebhookFromRow
     );
   }
 

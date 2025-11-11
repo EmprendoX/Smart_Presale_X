@@ -15,7 +15,8 @@ import {
   Developer,
   Tenant,
   TenantBranding,
-  Client
+  Client,
+  PaymentWebhook
 } from '../types';
 
 // Interfaz común para todos los servicios de base de datos
@@ -73,6 +74,12 @@ export interface DatabaseService {
   getTransactionByReservationId(reservationId: string): Promise<Transaction | null>;
   createTransaction(transaction: Transaction): Promise<Transaction>;
   updateTransaction(id: string, updates: Partial<Transaction>): Promise<Transaction | null>;
+
+  // Payment webhooks
+  getPaymentWebhooks(): Promise<PaymentWebhook[]>;
+  getPaymentWebhookById(id: string): Promise<PaymentWebhook | null>;
+  createPaymentWebhook(event: PaymentWebhook): Promise<PaymentWebhook>;
+  updatePaymentWebhook(id: string, updates: Partial<PaymentWebhook>): Promise<PaymentWebhook | null>;
 
   // Research
   getResearch(): Promise<ResearchItem[]>;

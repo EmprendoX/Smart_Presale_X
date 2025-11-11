@@ -5,7 +5,8 @@ import {
   Round,
   AutomationWorkflow,
   IntelligentAgent,
-  Community
+  Community,
+  TransactionProvider
 } from "./types";
 
 const json = (res: Response) => res.json();
@@ -53,11 +54,21 @@ export const api = {
     }).then(json),
 
   // Pago simulado
-  checkout: async (reservationId: string): Promise<ApiResult<{ txId: string }>> =>
-    fetch("/api/checkout", { 
-      method: "POST", 
+  checkout: async (
+    reservationId: string
+  ): Promise<
+    ApiResult<{
+      transactionId: string;
+      reservationStatus: Reservation["status"];
+      clientSecret?: string | null;
+      provider: TransactionProvider;
+      nextAction?: string | null;
+    }>
+  > =>
+    fetch("/api/checkout", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reservationId }) 
+      body: JSON.stringify({ reservationId })
     }).then(json),
 
   // Cierre de ronda (simulado)

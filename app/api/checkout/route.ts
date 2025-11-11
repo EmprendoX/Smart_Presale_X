@@ -1,30 +1,30 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/config";
+import { payments } from "@/lib/config";
 
 export async function POST(req: Request) {
   const body = await req.json();
   const { reservationId } = body || {};
 
-  const r = await db.getReservationById(reservationId);
-  if (!r) return NextResponse.json({ ok: false, error: "Reserva no encontrada" }, { status: 404 });
+  if (!reservationId) {
+    return NextResponse.json({ ok: false, error: "reservationId requerido" }, { status: 400 });
+  }
 
-  // Simular cobro
-  const newStatus = r.status === "waitlisted" ? "waitlisted" : "confirmed";
-  await db.updateReservation(reservationId, { status: newStatus });
-
-  const txId = `tx_${Math.random().toString(36).slice(2, 10)}`;
-  const round = await db.getRoundById(r.roundId);
-  const project = round ? await db.getProjectById(round.projectId) : null;
-
-  await db.createTransaction({
-    id: txId,
-    reservationId: r.id,
-    provider: "simulated",
-    amount: r.amount,
-    currency: project?.currency || "USD",
-    status: newStatus === "confirmed" ? "succeeded" : "pending"
-  });
-
-  return NextResponse.json({ ok: true, data: { txId } });
+  try {
+    const result = await payments.initiateReservationPayment(reservationId);
+    return NextResponse.json({
+      ok: true,
+      data: {
+        transactionId: result.transaction.id,
+        reservationStatus: result.reservation.status,
+        clientSecret: result.clientSecret,
+        provider: payments.provider,
+        nextAction: result.nextAction ?? null
+      }
+    });
+  } catch (error: any) {
+    const message = typeof error?.message === "string" ? error.message : "Error al iniciar el pago";
+    const status = message.includes("not found") ? 404 : 400;
+    return NextResponse.json({ ok: false, error: message }, { status });
+  }
 }
 
