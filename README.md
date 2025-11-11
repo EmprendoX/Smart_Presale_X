@@ -58,7 +58,7 @@ SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
 
 ### Paso 2: Crear Tablas
 
-Ejecuta este SQL en el SQL Editor de Supabase:
+Ejecuta este SQL en el SQL Editor de Supabase (disponible también en `supabase/schema.sql`):
 
 ```sql
 -- Tabla de proyectos
@@ -136,7 +136,13 @@ npm install @supabase/supabase-js
 
 ### Paso 4: Migrar Datos JSON a Supabase
 
-Crea un script de migración (opcional) para transferir datos existentes:
+Ejecuta el script `scripts/migrate-to-supabase.ts` para transferir datos existentes desde los JSON. Requiere que tengas configuradas las variables de entorno `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY`.
+
+```bash
+npx ts-node -r tsconfig-paths/register scripts/migrate-to-supabase.ts
+```
+
+Código base del script:
 
 ```typescript
 // scripts/migrate-to-supabase.ts

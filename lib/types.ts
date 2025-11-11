@@ -9,6 +9,9 @@ export type User = {
   name: string;
   role: Role;
   kycStatus: KycStatus;
+  tenantId?: string;
+  email?: string;
+  metadata?: Record<string, any> | null;
 };
 
 export type Developer = {
@@ -16,6 +19,7 @@ export type Developer = {
   userId: string;
   company: string;
   verifiedAt?: string | null;
+  tenantId?: string;
 };
 
 export type ProjectStatus = "draft" | "review" | "published";
@@ -40,6 +44,7 @@ export type Project = {
   country: string;
   currency: Currency;
   status: ProjectStatus;
+  tenantId?: string;
   images: string[];
   videoUrl?: string;
   description: string;
@@ -79,6 +84,50 @@ export type Project = {
   featured?: boolean;              // destacar en home
   automationReady?: boolean;       // bandera para integraciones
   agentIds?: string[];             // agentes inteligentes asignados
+};
+
+export type TenantStatus = "active" | "inactive" | "suspended";
+
+export type Tenant = {
+  id: string;
+  slug: string;
+  name: string;
+  status: TenantStatus;
+  region?: string | null;
+  metadata?: Record<string, any> | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TenantBranding = {
+  id: string;
+  tenantId: string;
+  logoUrl?: string | null;
+  darkLogoUrl?: string | null;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
+  accentColor?: string | null;
+  backgroundColor?: string | null;
+  typography?: Record<string, any> | null;
+  buttons?: Record<string, any> | null;
+  metadata?: Record<string, any> | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ClientStatus = "active" | "inactive" | "invited";
+
+export type Client = {
+  id: string;
+  tenantId: string;
+  name: string;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  status: ClientStatus;
+  metadata?: Record<string, any> | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type GoalType = "reservations" | "amount";
